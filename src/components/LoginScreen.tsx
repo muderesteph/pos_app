@@ -8,7 +8,7 @@ import { RootStackParamList } from '../navigation/RootStackParamList';
 
 const LOGIN_MUTATION = gql`
   mutation UserLogin($pin: String!) {
-    userLogin(input: { pin: $pin }) {
+    posUserLogin(input: { pin: $pin }) {
       status
       success
       accessToken
@@ -46,8 +46,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     if (isOnline) {
       try {
         const { data } = await login({ variables: { pin } });
-        if (data.userLogin.status) {
-          await AsyncStorage.setItem('token', data.userLogin.accessToken);
+        if (data.posUserLogin.status) {
+          await AsyncStorage.setItem('token', data.posUserLogin.accessToken);
           await AsyncStorage.setItem('pin', pin);
           navigation.navigate('POS');
         } else {
