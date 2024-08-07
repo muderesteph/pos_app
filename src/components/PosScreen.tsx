@@ -121,6 +121,10 @@ const PosScreen = () => {
       console.error('Error loading products from storage', error);
     }
   };
+  const parseFloat_nancl=(amnt)=>{
+    var cas=parseFloat(amnt)
+     return isNaN(cas)?0:cas;
+  }
 
   const handleProductSelection = (value) => {
     const product = products.find(p => p.value === value);
@@ -135,7 +139,7 @@ const PosScreen = () => {
     if (existingProduct) {
       Alert.alert('Product already in cart', 'You can update the quantity in the cart.');
     } else {
-      setCart([...cart, { ...product, quantity: 1, subtotal: parseFloat(product.priceHtml.regularPrice) }]);
+      setCart([...cart, { ...product, quantity: 1, subtotal: parseFloat_nancl(product.priceHtml.regularPrice) }]);
     }
   };
 
@@ -240,17 +244,30 @@ const PosScreen = () => {
         data={cart}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={[styles.cartItem, item.quantity === 0 && styles.cartItemDanger]}>
+          <View style={[styles.cartItem, (item.quantity === 0||item.subtotal==0) && styles.cartItemDanger]}>
             <Text style={styles.itemText}>{item.label}</Text>
-            <TextInput
-              style={styles.quantityInput}
-              value={item.quantity.toString()}
-              onChangeText={(text) => updateQuantity(item.id, text)}
-              keyboardType="numeric"
-            />
+            
+            <View style={styles.quantityContainer}>
+              <TouchableOpacity onPress={() => updateQuantity(item.id, item.quantity - 1)}>
+                <Text style={styles.quantityButton}>-</Text>
+              </TouchableOpacity>
+
+              <TextInput
+                style={styles.quantityInput}
+                value={item.quantity.toString()}
+                onChangeText={(text) => updateQuantity(item.id, parseInt(text, 10))}
+                keyboardType="numeric"
+              />
+
+              <TouchableOpacity onPress={() => updateQuantity(item.id, item.quantity + 1)}>
+                <Text style={styles.quantityButton}>+</Text>
+              </TouchableOpacity>
+            </View>
+
             <Text style={styles.itemText}>{item.subtotal.toFixed(2)}</Text>
+            
             <TouchableOpacity onPress={() => removeItem(item.id)}>
-            <Text style={styles.removeItem}>Remove</Text>
+              <Text style={styles.removeItem}>Remove</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -293,6 +310,15 @@ const styles = StyleSheet.create({
   itemText: {
     flex: 1,
     textAlign: 'center',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  quantityButton: {
+    fontSize: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   quantityInput: {
     width: 40,
