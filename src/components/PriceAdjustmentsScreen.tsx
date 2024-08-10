@@ -4,7 +4,7 @@ import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery } from '@apollo/client';
-import { listPriceAdjustmentsQuery } from '../graphql/mutations';
+import { listPriceAdjustmentsQuery } from '../graphql/mutations/createPriceAdjustment';
 
 const PriceAdjustmentsScreen = () => {
   const [isOnline, setIsOnline] = useState(true);

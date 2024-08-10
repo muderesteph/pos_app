@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './components/LoginScreen';
 import PosTabs from './navigation/PosTabs';
+import AdminAuthScreen from './components/AdminAuthScreen';  // Import AdminAuthScreen
 import { RootStackParamList } from './navigation/RootStackParamList';
 
 const client = new ApolloClient({
@@ -19,6 +20,7 @@ const App = () => (
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="POS" component={PosTabs} />
+        <Stack.Screen name="AdminAuth" component={AdminAuthScreen} />  
       </Stack.Navigator>
     </NavigationContainer>
   </ApolloProvider>

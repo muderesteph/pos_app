@@ -5,7 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation } from '@apollo/client';
 import { adminLoginMutation } from '../graphql/mutations/adminLogin';
 
-const AdminAuthScreen = ({ navigation }) => {
+const AdminAuthScreen = ({ route, navigation }) => {
+  const { screenName } = route.params; // Get the screen name from route params
   const [pin, setPin] = useState('');
   const [isOnline, setIsOnline] = useState(true);
   const [adminLogin] = useMutation(adminLoginMutation);
@@ -26,7 +27,7 @@ const AdminAuthScreen = ({ navigation }) => {
         const response = await adminLogin({ variables: { pin } });
         if (response.data.posUserLogin.user.roleId === 1) {
           await AsyncStorage.setItem('adminAuthorized', 'true');
-          navigation.navigate('NextScreen'); // Replace with the actual next screen
+          navigation.navigate(screenName);  // Navigate to the intended screen
         } else {
           Alert.alert('Error', 'Unauthorized');
         }
@@ -36,7 +37,7 @@ const AdminAuthScreen = ({ navigation }) => {
     } else {
       const storedAdminAuthorized = await AsyncStorage.getItem('adminAuthorized');
       if (storedAdminAuthorized === 'true') {
-        navigation.navigate('NextScreen'); // Replace with the actual next screen
+        navigation.navigate(screenName);  // Navigate to the intended screen
       } else {
         Alert.alert('Error', 'No offline access. Please log in while online.');
       }
@@ -52,6 +53,7 @@ const AdminAuthScreen = ({ navigation }) => {
         onChangeText={setPin}
         secureTextEntry
         placeholder="Enter PIN"
+        keyboardType="numeric"
       />
       <Button title="Login" onPress={handleLogin} />
     </View>
@@ -70,11 +72,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
+    height: 40,
+    borderColor: 'gray',
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 20,
-    borderRadius: 5,
+    marginBottom: 12,
+    paddingHorizontal: 8,
+    textAlign: 'center',
   },
 });
 

@@ -4,7 +4,7 @@ import { View, Text, Button, FlatList, StyleSheet, Alert } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery } from '@apollo/client';
-import { listStocksQuery, addStockMutation, deleteStockMutation } from '../graphql/mutations';
+import { listStocksQuery, addStockMutation, deleteStockMutation } from '../graphql/mutations/addStockItem';
 
 const StockItemsScreen = () => {
   const [isOnline, setIsOnline] = useState(true);
