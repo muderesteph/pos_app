@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity, Dimensions, Modal, TextInput, Button } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useMutation, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { listStocksQuery, addStockMutation, deleteStockMutation, PRODUCTS_QUERY } from '../graphql/mutations/addStockItem';
+import { listStocksQuery } from '../graphql/mutations/addStockItem';
 import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
@@ -14,17 +13,8 @@ const { width, height } = Dimensions.get('window');
 const StockItemsScreen = () => {
   const [isOnline, setIsOnline] = useState(true);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState('');
-  const [sellingPrice, setSellingPrice] = useState('');
-  const [createdAt, setCreatedAt] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const { data: productsData } = useQuery(PRODUCTS_QUERY);
   const { data, refetch } = useQuery(listStocksQuery);
-  const [addStockItem] = useMutation(addStockMutation);
-  const [deleteStockItem] = useMutation(deleteStockMutation);
-
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -47,26 +37,6 @@ const StockItemsScreen = () => {
     }
     await AsyncStorage.removeItem('offlineStocks');
     refetch();
-  };
-
-  const handleAddStockItem = async () => {
-    const stock = {
-      product_id: selectedProduct,
-      qty: 10, // Assuming qty is 10 for now; can be modified later
-      selling_price: sellingPrice,
-      created_at: createdAt.toISOString(),
-    };
-    
-    if (isOnline) {
-      await addStockItem({ variables: stock });
-      refetch();
-    } else {
-      const offlineStocks = JSON.parse(await AsyncStorage.getItem('offlineStocks')) || [];
-      offlineStocks.push(stock);
-      await AsyncStorage.setItem('offlineStocks', JSON.stringify(offlineStocks));
-    }
-    
-    setModalVisible(false); // Close modal after adding the item
   };
 
   const handleDeleteStockItem = (id) => {
@@ -102,15 +72,6 @@ const StockItemsScreen = () => {
     </View>
   );
 
-  const openDatePicker = () => setShowDatePicker(true);
-
-  const onDateChange = (event, selectedDate) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setCreatedAt(selectedDate);
-    }
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.active_page}>
@@ -124,7 +85,7 @@ const StockItemsScreen = () => {
       </View>
 
       <View style={styles.totals_page}>
-        <Button title="Add Stock Item" onPress={() => setModalVisible(true)} />
+        <Button title="Add Stock Item" onPress={() => navigation.navigate('AddStockItem')} />
       </View>
 
       <View style={styles.menu_page}>
@@ -133,37 +94,6 @@ const StockItemsScreen = () => {
         </TouchableOpacity>
         <DropdownMenu isVisible={isDropdownVisible} onClose={() => setDropdownVisible(false)} />
       </View>
-
-      <Modal visible={isModalVisible} animationType="slide">
-        <View style={styles.modalContent}>
-          <Text>Select Product</Text>
-          <TextInput
-            placeholder="Product Name"
-            value={selectedProduct}
-            onChangeText={setSelectedProduct}
-            style={styles.input}
-          />
-          <Text>Set Selling Price</Text>
-          <TextInput
-            placeholder="Selling Price"
-            value={sellingPrice}
-            onChangeText={setSellingPrice}
-            keyboardType="numeric"
-            style={styles.input}
-          />
-          <Button title="Select Date" onPress={openDatePicker} />
-          {showDatePicker && (
-            <DateTimePicker
-              value={createdAt}
-              mode="date"
-              display="default"
-              onChange={onDateChange}
-            />
-          )}
-          <Button title="Add Stock" onPress={handleAddStockItem} />
-          <Button title="Cancel" onPress={() => setModalVisible(false)} />
-        </View>
-      </Modal>
     </View>
   );
 };

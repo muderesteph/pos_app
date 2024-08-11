@@ -11,6 +11,7 @@ export type RootStackParamList = {
   PriceAdjustments: undefined;
   CollectCash: undefined;
   StockTake: undefined;
+  AddStockItem: undefined;
 };
 
 // Navigation Prop Types
