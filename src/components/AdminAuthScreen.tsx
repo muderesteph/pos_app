@@ -6,7 +6,7 @@ import { useMutation } from '@apollo/client';
 import { adminLoginMutation } from '../graphql/mutations/adminLogin';
 
 const AdminAuthScreen = ({ route, navigation }) => {
-  const { screenName } = route.params; // Get the screen name from route params
+  const { screenName, onSuccess } = route.params;
   const [pin, setPin] = useState('');
   const [isOnline, setIsOnline] = useState(true);
   const [adminLogin] = useMutation(adminLoginMutation);
@@ -27,12 +27,15 @@ const AdminAuthScreen = ({ route, navigation }) => {
         const response = await adminLogin({ variables: { pin } });
         if (response.data.posUserLogin.user.roleId === 1) {
           await AsyncStorage.setItem('adminAuthorized', 'true');
-          navigation.navigate(screenName);  // Navigate to the intended screen
+          //onSuccess();
+          navigation.navigate(screenName);
         } else {
-          Alert.alert('Error', 'Unauthorized');
+          Alert.alert('Authentication failed', 'Invalid PIN.');
         }
       } catch (error) {
-        Alert.alert('Error', 'Login failed');
+        console.error('Login error:', error);
+        Alert.alert('Error', 'Failed to authenticate. Please try again.');
+
       }
     } else {
       const storedAdminAuthorized = await AsyncStorage.getItem('adminAuthorized');
@@ -46,16 +49,16 @@ const AdminAuthScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Enter Admin Password</Text>
+      <Text style={styles.title}>Enter Admin PIN</Text>
       <TextInput
         style={styles.input}
+        secureTextEntry
+        keyboardType="numeric"
+        placeholder="Enter PIN"
         value={pin}
         onChangeText={setPin}
-        secureTextEntry
-        placeholder="Enter PIN"
-        keyboardType="numeric"
       />
-      <Button title="Login" onPress={handleLogin} />
+      <Button title="Submit" onPress={handleLogin} />
     </View>
   );
 };
@@ -67,9 +70,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
-    textAlign: 'center',
+    fontSize: 20,
     marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
     height: 40,
