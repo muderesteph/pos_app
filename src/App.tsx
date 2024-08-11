@@ -3,10 +3,12 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './components/LoginScreen';
-import PosTabs from './navigation/PosTabs';
+
 import AdminAuthScreen from './components/AdminAuthScreen';  // Import AdminAuthScreen
 import CashCollectionsScreen from './components/CashCollectionsScreen';
 import PriceAdjustmentsScreen from './components/PriceAdjustmentsScreen';
+import PosScreen from './components/PosScreen';
+import StockTakeScreen from './components/StockTakeScreen';
 
 import StockItemsScreen from './components/StockItemsScreen';
 
@@ -26,12 +28,13 @@ const App = () => (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="POS" component={PosTabs} />
+        <Stack.Screen name="POSMAIN" component={PosScreen} />
         <Stack.Screen name="AdminAuth" component={AdminAuthScreen} />  
         <Stack.Screen name="CashCollections" component={CashCollectionsScreen} /> 
         <Stack.Screen name="PriceAdjustments" component={PriceAdjustmentsScreen} /> 
 
         <Stack.Screen name="StockItems" component={StockItemsScreen} /> 
+        <Stack.Screen name="StockTake" component={StockTakeScreen} /> 
 
       </Stack.Navigator>
     </NavigationContainer>

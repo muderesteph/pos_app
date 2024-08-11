@@ -1,49 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, TextInput, FlatList, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, Button, StyleSheet, TextInput, FlatList, Alert, TouchableOpacity, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import DropDownPicker from 'react-native-dropdown-picker';
+import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { PRODUCTS_QUERY, PLACE_POS_ORDER_MUTATION } from '../graphql/mutations/posscreen';
 
-const PRODUCTS_QUERY = gql`
-  query AllProducts {
-    allProducts {
-      data {
-        id
-        sku
-        name
-        description
-        shortDescription
-        createdAt
-        updatedAt
-        inventories {
-          qty
-          productId
-          id
-        }
-        priceHtml {
-          regularPrice
-          currencyCode
-        }
-      }
-    }
-  }
-`;
-
-const PLACE_POS_ORDER_MUTATION = gql`
-  mutation PlacePosOrder($input: PosOrderInputType!) {
-    placePosOrder(input: $input) {
-      order {
-        id
-        status
-        subTotal
-      }
-    }
-  }
-`;
+const { width, height } = Dimensions.get('window');
 
 const PosScreen = () => {
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -121,9 +89,10 @@ const PosScreen = () => {
       console.error('Error loading products from storage', error);
     }
   };
-  const parseFloat_nancl=(amnt)=>{
-    var cas=parseFloat(amnt)
-     return isNaN(cas)?0:cas;
+
+  const parseFloat_nancl = (amnt) => {
+    var cas = parseFloat(amnt)
+    return isNaN(cas) ? 0 : cas;
   }
 
   const handleProductSelection = (value) => {
@@ -220,60 +189,74 @@ const PosScreen = () => {
 
   return (
     <View style={styles.container}>
-      <DropDownPicker
-        open={open}
-        value={selectedProduct?.value}
-        items={items}
-        setOpen={setOpen}
-        setValue={(callback) => {
-          const value = callback(selectedProduct?.value);
-          handleProductSelection(value);
-        }}
-        setItems={setItems}
-        placeholder="Select a product"
-        searchable={true}
-        searchPlaceholder="Search product..."
-      />
-      <View style={styles.tableHeader}>
-        <Text style={styles.headerText}>Product Name</Text>
-        <Text style={styles.headerText}>Quantity</Text>
-        <Text style={styles.headerText}>Subtotal</Text>
-        <Text style={styles.headerText}>Actions</Text>
+      <View style={styles.dropdown_style}>
+        <DropDownPicker
+          open={open}
+          value={selectedProduct?.value}
+          items={items}
+          setOpen={setOpen}
+          setValue={(callback) => {
+            const value = callback(selectedProduct?.value);
+            handleProductSelection(value);
+          }}
+          setItems={setItems}
+          placeholder="Select a product"
+          searchable={true}
+          searchPlaceholder="Search product..."
+        />
       </View>
-      <FlatList
-        data={cart}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={[styles.cartItem, (item.quantity === 0||item.subtotal==0) && styles.cartItemDanger]}>
-            <Text style={styles.itemText}>{item.label}</Text>
-            
-            <View style={styles.quantityContainer}>
-              <TouchableOpacity onPress={() => updateQuantity(item.id, item.quantity - 1)}>
-                <Text style={styles.quantityButton}>-</Text>
-              </TouchableOpacity>
+      <View style={styles.active_page}>
+        <View style={styles.tableHeader}>
+          <Text style={styles.headerText}>Product Name</Text>
+          <Text style={styles.headerText}>Quantity</Text>
+          <Text style={styles.headerText}>Subtotal</Text>
+          <Text style={styles.headerText}>Actions</Text>
+        </View>
+        <FlatList
+          data={cart}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={[styles.cartItem, (item.quantity === 0 || item.subtotal == 0) && styles.cartItemDanger]}>
+              <Text style={styles.itemText}>{item.label}</Text>
 
-              <TextInput
-                style={styles.quantityInput}
-                value={item.quantity.toString()}
-                onChangeText={(text) => updateQuantity(item.id, parseInt(text, 10))}
-                keyboardType="numeric"
-              />
+              <View style={styles.quantityContainer}>
+                <TouchableOpacity onPress={() => updateQuantity(item.id, item.quantity - 1)}>
+                  <Text style={styles.quantityButton}>-</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => updateQuantity(item.id, item.quantity + 1)}>
-                <Text style={styles.quantityButton}>+</Text>
+                <TextInput
+                  style={styles.quantityInput}
+                  value={item.quantity.toString()}
+                  onChangeText={(text) => updateQuantity(item.id, parseInt(text, 10))}
+                  keyboardType="numeric"
+                />
+
+                <TouchableOpacity onPress={() => updateQuantity(item.id, item.quantity + 1)}>
+                  <Text style={styles.quantityButton}>+</Text>
+                </TouchableOpacity>
+              </View>
+
+              <Text style={styles.itemText}>{item.subtotal.toFixed(2)}</Text>
+              <TouchableOpacity onPress={() => removeItem(item.id)}>
+                <Text style={styles.removeItem}><Icon name="trash" size={20} color="red" /></Text>
               </TouchableOpacity>
             </View>
+          )}
+        />
+      <View style={styles.blank_forscrolling}>
 
-            <Text style={styles.itemText}>{item.subtotal.toFixed(2)}</Text>
-            
-            <TouchableOpacity onPress={() => removeItem(item.id)}>
-              <Text style={styles.removeItem}>Remove</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-      <Text style={styles.grandTotalText}>Grand Total: {calculateGrandTotal()}</Text>
-      <Button title="Place Order" onPress={placePosOrderHandler} />
+      </View>
+      </View>
+      <View style={styles.totals_page}>
+          <Text style={styles.grandTotalText}>Grand Total: {calculateGrandTotal()}</Text>
+          <Button title="Place Order" onPress={placePosOrderHandler} style={styles.placeOrderButton} />
+      </View>
+      <View style={styles.menu_page}>
+        <TouchableOpacity style={styles.toggleButton} onPress={() => setDropdownVisible(true)}>
+          <Icon name="bars" size={30} color="#000" />
+        </TouchableOpacity>
+        <DropdownMenu isVisible={isDropdownVisible} onClose={() => setDropdownVisible(false)} />
+      </View> 
     </View>
   );
 };
@@ -296,6 +279,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'center',
+    fontSize: width * 0.04, // Responsive font size
   },
   cartItem: {
     flexDirection: 'row',
@@ -310,30 +294,73 @@ const styles = StyleSheet.create({
   itemText: {
     flex: 1,
     textAlign: 'center',
+    fontSize: width * 0.04, // Responsive font size
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   quantityButton: {
-    fontSize: 20,
+    fontSize: width * 0.05, // Responsive button size
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
+  blank_forscrolling:{
+     height:height*0.05,
+  },
   quantityInput: {
-    width: 40,
+    width: width * 0.1, // Responsive input width
     textAlign: 'center',
     borderWidth: 1,
     borderColor: '#d0d0d0',
+    fontSize: width * 0.04, // Responsive font size
   },
   grandTotalText: {
     fontWeight: 'bold',
     textAlign: 'right',
     padding: 16,
+    fontSize: width * 0.05, // Responsive font size
   },
   removeItem: {
     color: 'red',
+    fontSize: width * 0.05, // Responsive icon size
+  },
+  toggleButton: {
+    position: 'absolute',
+    bottom:0, // Responsive bottom margin
+    //left: width * 0.05, // Responsive left margin
+  },
+  placeOrderButton: {
+    marginBottom: height * 0.1,  // Push the button up slightly based on screen height
+  },
+  
+  totals_page:{
+    position: 'absolute',
+    bottom: height * 0.005, // Responsive bottom position
+    textAlign: 'right',
+    height: height * 0.15, // Responsive height
+    //top:height * 0.48,
+    right:width*0.01,
+    backgroundColor:'white'
+  },
+  dropdown_style:{
+    height: height * 0.15,
+  },
+
+
+
+  active_page:{
+    position: 'relative',
+    //bottom: height * 0.05, // Responsive bottom position
+    overflow: 'scroll',
+    height: height * 0.65, // Responsive height
+  },
+  menu_page:{
+    position: 'absolute',
+    bottom: 0,
+    left:width*0.01
   },
 });
+
 
 export default PosScreen;

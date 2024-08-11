@@ -5,23 +5,9 @@ import NetInfo from '@react-native-community/netinfo';
 import { gql, useMutation } from '@apollo/client';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../navigation/RootStackParamList';
+import { LOGIN_MUTATION } from '../graphql/mutations/adminLogin';
 
-const LOGIN_MUTATION = gql`
-  mutation UserLogin($pin: String!) {
-    posUserLogin(input: { pin: $pin }) {
-      status
-      success
-      accessToken
-      tokenType
-      expiresIn
-      user {
-        id
-        name
-        email
-      }
-    }
-  }
-`;
+
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Login'>;
@@ -49,7 +35,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         if (data.posUserLogin.status) {
           await AsyncStorage.setItem('token', data.posUserLogin.accessToken);
           await AsyncStorage.setItem('pin', pin);
-          navigation.navigate('POS');
+          navigation.navigate('POSMAIN');
         } else {
           Alert.alert('Login Failed', 'Invalid credentials');
         }
@@ -62,7 +48,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       if (storedPin === pin) {
         const token = await AsyncStorage.getItem('token');
         if (token) {
-          navigation.navigate('POS');
+          navigation.navigate('POSMAIN');
         } else {
           Alert.alert('Login Failed', 'No token found');
         }
