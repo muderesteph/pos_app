@@ -5,6 +5,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './components/LoginScreen';
 import PosTabs from './navigation/PosTabs';
 import AdminAuthScreen from './components/AdminAuthScreen';  // Import AdminAuthScreen
+import CashCollectionsScreen from './components/CashCollectionsScreen';
+import PriceAdjustmentsScreen from './components/PriceAdjustmentsScreen';
+
+import StockItemsScreen from './components/StockItemsScreen';
+
+//import CashCollectionsScreen from './components/CashCollectionsScreen';
+
 import { RootStackParamList } from './navigation/RootStackParamList';
 
 const client = new ApolloClient({
@@ -21,6 +28,11 @@ const App = () => (
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="POS" component={PosTabs} />
         <Stack.Screen name="AdminAuth" component={AdminAuthScreen} />  
+        <Stack.Screen name="CashCollections" component={CashCollectionsScreen} /> 
+        <Stack.Screen name="PriceAdjustments" component={PriceAdjustmentsScreen} /> 
+
+        <Stack.Screen name="StockItems" component={StockItemsScreen} /> 
+
       </Stack.Navigator>
     </NavigationContainer>
   </ApolloProvider>
