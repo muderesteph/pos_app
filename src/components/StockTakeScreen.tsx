@@ -1,8 +1,10 @@
 import React , { useEffect, useState } from 'react';
 import { View, Text, Button, FlatList, StyleSheet, Alert,TouchableOpacity,Dimensions } from 'react-native';
-const { width, height } = Dimensions.get('window');
 import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
+const { width, height } = Dimensions.get('window');
+
 
 const StockTakeScreen = () => {
   const [isOnline, setIsOnline] = useState(true);
