@@ -5,6 +5,7 @@ export const listStocksQuery = gql`
     latestStocks {
       id
       product_id
+      product_name
       qty
       selling_price
       created_at
@@ -29,10 +30,12 @@ export const deleteStockMutation = gql`
 `;
 
 export const PRODUCTS_QUERY = gql`
-  query Products {
-    products {
-      id
-      name
+query AllProducts {
+    allProducts {
+      data {
+        id
+        name
+      }
     }
   }
 `;
