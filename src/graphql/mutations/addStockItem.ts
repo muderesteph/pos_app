@@ -14,9 +14,16 @@ export const listStocksQuery = gql`
 `;
 
 export const addStockMutation = gql`
-  mutation AddStock($product_id: ID!, $qty: Int!, $selling_price: Float!, $created_at: String!) {
-    addStock(product_id: $product_id, qty: $qty, selling_price: $selling_price, created_at: $created_at) {
-      id
+  mutation AddStock($input: AddStockInput!) {
+    addStock(input: $input) {
+       stock {
+            id
+            product_id
+            product_name
+            qty
+            selling_price
+            created_at
+        }
     }
   }
 `;

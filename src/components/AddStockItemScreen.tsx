@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity, Dimensions, FlatList, TouchableWithoutFeedback } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+  Dimensions,
+  FlatList,
+  TouchableWithoutFeedback
+} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery } from '@apollo/client';
@@ -18,30 +29,32 @@ const AddStockItemScreen = () => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
+  const [qty, setQty] = useState(''); // New field for quantity
   const [createdAt, setCreatedAt] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [query, setQuery] = useState('');
 
   const navigation = useNavigation();
   const [addStockItem] = useMutation(addStockMutation);
-  
+
   const { data, loading, error } = useQuery(PRODUCTS_QUERY);
 
   const handleAddStockItem = async () => {
-    if (!selectedProduct || !sellingPrice) {
+    if (!selectedProduct || !sellingPrice || !qty) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
 
     const stock = {
       product_id: selectedProduct,
-      qty: 10, // Assuming qty is 10 for now; can be modified later
+      qty: qty,
       selling_price: sellingPrice,
       created_at: createdAt.toISOString(),
     };
 
     if (isOnline) {
-      await addStockItem({ variables: stock });
+      //var product_id=stock.product_id
+      await addStockItem({ variables: {input:stock} });
     } else {
       const offlineStocks = JSON.parse(await AsyncStorage.getItem('offlineStocks')) || [];
       offlineStocks.push(stock);
@@ -86,6 +99,16 @@ const AddStockItemScreen = () => {
             ),
           }}
           placeholder="Search Product"
+          inputContainerStyle={styles.autocompleteInputContainer}
+          listContainerStyle={styles.autocompleteListContainer}
+          style={styles.input}
+        />
+        <Text>Set Quantity</Text>
+        <TextInput
+          placeholder="Quantity"
+          value={qty}
+          onChangeText={setQty}
+          keyboardType="numeric"
           style={styles.input}
         />
         <Text>Set Selling Price</Text>
@@ -114,6 +137,7 @@ const AddStockItemScreen = () => {
       </View>
       <View style={styles.totals_page}>
         <Button title="Add Stock" onPress={handleAddStockItem} />
+        <View style={styles.buttonSpacing} />
         <Button title="Cancel" onPress={() => navigation.goBack()} />
       </View>
       <View style={styles.menu_page}>
@@ -136,8 +160,18 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 12,
+    marginBottom: 8, // Reduced space between fields
     paddingHorizontal: 8,
+  },
+  autocompleteInputContainer: {
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 8, // Match the margin with other inputs
+    paddingHorizontal: 8,
+    height: 40, // Match the height with other inputs
+  },
+  autocompleteListContainer: {
+    maxHeight: 150, // Limit the height of the dropdown list
   },
   item: {
     padding: 10,
@@ -156,6 +190,9 @@ const styles = StyleSheet.create({
     height: height * 0.15,
     right: width * 0.01,
     backgroundColor: 'white',
+  },
+  buttonSpacing: {
+    height: 10, // Add spacing between buttons
   },
   active_page: {
     position: 'relative',
