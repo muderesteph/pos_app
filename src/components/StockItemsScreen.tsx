@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     overflow: 'scroll',
   },
   menu_page: {
-    position: 'absolute',
+    // position: 'absolute',
     bottom: 0,
     left: width * 0.01,
   },
