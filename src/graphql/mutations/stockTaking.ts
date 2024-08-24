@@ -2,15 +2,8 @@ import { gql } from '@apollo/client';
 
 // Mutation to create a stock take
 export const STOCK_TAKE_MUTATION = gql`
-  mutation CreateStockTake($product_id: ID!, $physical_count: Int!, $system_count: Int!, $taken_at: String!) {
-    createStockTake(
-      input: {
-        product_id: $product_id
-        physical_count: $physical_count
-        system_count: $system_count
-        taken_at: $taken_at
-      }
-    ) {
+  mutation CreateStockTake($input: StockTakeInput!) {
+    createStockTake(input: $input) {
       message
       stock {
         id
@@ -30,6 +23,7 @@ export const STOCK_TAKES_QUERY = gql`
     stockTakes {
       id
       product_id
+      product_name
       physical_count
       system_count
       reconciliation_difference
