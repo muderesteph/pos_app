@@ -4,8 +4,8 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useMutation, useQuery } from '@apollo/client';
-import { STOCK_TAKE_MUTATION, STOCK_TAKES_QUERY } from '../graphql/mutations/stockTaking';
-import { PRODUCTS_QUERY } from '../graphql/mutations/posscreen';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { STOCK_TAKE_MUTATION, STOCK_TAKES_QUERY, PRODUCTS_QUERY } from '../graphql/mutations/stockTaking';
 import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,16 +18,29 @@ const StockTakingScreen = () => {
   const [selectedProduct, setSelectedProduct] = useState('');
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [localStockTakes, setLocalStockTakes] = useState([]);
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state for button disabling
 
-  const { data, loading, error } = useQuery(PRODUCTS_QUERY);
-  const { data: stockTakesData, refetch } = useQuery(STOCK_TAKES_QUERY, {
-    fetchPolicy: 'network-only',
+  //const { data, loading, error } = useQuery(PRODUCTS_QUERY);
+  const { data: productsData, refetch: refetchProducts } = useQuery(PRODUCTS_QUERY, {
+    variables: { datetime: date.toISOString().split('T')[0] },
+  });
+  const { data: stockTakesData, refetch:refetchStocks } = useQuery(STOCK_TAKES_QUERY, {
+    fetchPolicy: 'network-only',  
+    variables: { datetime: date.toISOString().split('T')[0] },
   });
   const [createStockTake] = useMutation(STOCK_TAKE_MUTATION);
 
   useEffect(() => {
     checkLocalStockTakes();
   }, []);
+
+  useEffect(() => {
+    if (productsData && productsData.allStockTakeProducts.length > 0) {
+      setSelectedProduct(productsData.allStockTakeProducts[0].id);
+    }
+  }, [productsData]);
 
   const checkLocalStockTakes = async () => {
     const localData = await AsyncStorage.getItem('localStockTakes');
@@ -36,12 +49,32 @@ const StockTakingScreen = () => {
     }
   };
 
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setDate(selectedDate);
+      refetchStocks(); // Refetch the data when the date is changed
+      refetchProducts();
+    }
+  };
+
   const handleSubmit = async () => {
-    const selectedProductData = data.allProducts.data.find(product => product.id === selectedProduct);
-    const takenAt = new Date().toISOString();
+    if (isSubmitting) return; // Prevent double clicks
+
+    setIsSubmitting(true); // Disable the button on the first click
+    console.log(JSON.stringify(productsData.allStockTakeProducts))
+    const selectedProductData = productsData.allStockTakeProducts.find(product => product.id === selectedProduct);
+    const takenAt = date.toISOString().split('T')[0]; // Format date as yyyy-m-d
+
+    if (physicalCount === '') {
+      console.log('empty returning');
+      setIsSubmitting(false); // Re-enable the button if validation fails
+      return false;
+    }
+
     const stockTake = {
       product_id: selectedProduct,
-      physical_count: parseInt(physicalCount),
+      physical_count: physicalCount,
       taken_at: takenAt,
     };
 
@@ -49,7 +82,8 @@ const StockTakingScreen = () => {
       await createStockTake({
         variables: { input: stockTake },
       });
-      refetch(); // Refresh the list after submission
+      refetchStocks(); // Refresh the list after submission
+      refetchProducts();
       Alert.alert('Success', 'Stock take submitted successfully.');
     };
 
@@ -59,27 +93,29 @@ const StockTakingScreen = () => {
       Alert.alert('Offline', 'Stock take saved locally.');
     };
 
-    NetInfo.fetch().then(state => { 
-      console.log("online ", state.isConnected)
+    NetInfo.fetch().then(state => {
       if (state.isConnected) {
         handleSubmitOnline()
-        .then(() => {
-          // Select the next product in the list
-          const currentIndex = data.allProducts.data.findIndex(product => product.id === selectedProduct);
-          if (currentIndex < data.allProducts.data.length - 1) {
-            setSelectedProduct(data.allProducts.data[currentIndex + 1].id);
-          } else {
-            setSelectedProduct(data.allProducts.data[0].id); // Reset to the first product if at the end
-          }
-          setPhysicalCount(''); // Clear input after submission
-        })
-        .catch((e) => {
-          console.error('Error during online submission:', e); // Log the error
-          handleSubmitOffline();
-        });
-      
+          .then(() => {
+            const currentIndex = productsData.allStockTakeProducts.findIndex(product => product.id === selectedProduct);
+            if (currentIndex < productsData.allStockTakeProducts.length - 1) {
+              setSelectedProduct(productsData.allStockTakeProducts[currentIndex + 1].id);
+            } else {
+              setSelectedProduct(productsData.allStockTakeProducts[0].id); // Reset to the first product if at the end
+            }
+            setPhysicalCount(''); // Clear input after submission
+            setIsSubmitting(false); // Re-enable the button after successful submission
+          })
+          .catch(e => {
+            console.error('Error during online submission:', e);
+            handleSubmitOffline().finally(() => {
+              setIsSubmitting(false); // Re-enable the button after offline submission
+            });
+          });
       } else {
-        handleSubmitOffline();
+        handleSubmitOffline().finally(() => {
+          setIsSubmitting(false); // Re-enable the button after offline submission
+        });
       }
     });
   };
@@ -95,14 +131,15 @@ const StockTakingScreen = () => {
           });
           AsyncStorage.removeItem('localStockTakes'); // Clear local storage after successful submission
           setLocalStockTakes([]); // Clear local state
-          refetch(); // Refresh the list
+          refetchStocks(); // Refresh the list
+          refetchProducts();
         }
       });
     }
   }, [localStockTakes]);
 
-  if (loading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error: {error.message}</Text>;
+  //if (loading) return <Text>Loading...</Text>;
+  //if (error) return <Text>Error: {error.message}</Text>;
 
   const renderStockTakeItem = ({ item }) => (
     <View style={styles.stockTakeItem}>
@@ -116,15 +153,32 @@ const StockTakingScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.active_page}>
+
+
+      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
+          <Text style={styles.datePickerText}>{date.toISOString().split('T')[0]}</Text>
+        </TouchableOpacity>
+        {showDatePicker && (
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display="default"
+            onChange={handleDateChange}
+          />
+        )}
+
+        
         <Text>Select Product</Text>
         <Picker
           selectedValue={selectedProduct}
           onValueChange={(itemValue) => setSelectedProduct(itemValue)}
         >
-          {data.allProducts.data.map(product => (
-            <Picker.Item label={product.name} value={product.id} key={product.id} />
+          {productsData && productsData.allStockTakeProducts.map(product => (
+            <Picker.Item label={product.product_name} value={product.id} key={product.id} />
           ))}
         </Picker>
+
+       
 
         <TextInput
           placeholder="Physical Count"
@@ -134,7 +188,11 @@ const StockTakingScreen = () => {
           style={styles.input}
         />
 
-        <Button title="Submit Stock Take record" onPress={handleSubmit} />
+        <Button
+          title="Submit Stock Take record"
+          onPress={handleSubmit}
+          disabled={isSubmitting} // Disable the button if submission is in progress
+        />
 
         <View style={styles.tableHeader}>
           <Text style={styles.headerText}>Product Name</Text>
@@ -159,6 +217,8 @@ const StockTakingScreen = () => {
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   tableHeader: {
@@ -219,6 +279,17 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontSize: width * 0.04, // Responsive font size
+  },
+  datePickerButton: {
+    marginBottom: 12,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  datePickerText: {
+    fontSize: width * 0.04, // Responsive font size
+    color: '#333',
   },
 });
 

@@ -17,10 +17,10 @@ export const STOCK_TAKE_MUTATION = gql`
   }
 `;
 
-// Query to retrieve all stock takes
+// Query to retrieve all stock takes filtered by date
 export const STOCK_TAKES_QUERY = gql`
-  query StockTakes {
-    stockTakes {
+  query StockTakes($datetime: String!) {
+    stockTakes(input: { taken_at: $datetime }) {
       id
       product_id
       product_name
@@ -28,6 +28,16 @@ export const STOCK_TAKES_QUERY = gql`
       system_count
       reconciliation_difference
       taken_at
+    }
+  }
+`;
+
+export const PRODUCTS_QUERY = gql`
+  query StockTakes($datetime: String!) {
+    allStockTakeProducts(input: { taken_at: $datetime }) {
+      id
+      sku
+      product_name
     }
   }
 `;
