@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   active_page: {
     position: 'relative',
-    height: height * 0.65,
+    height: height * 0.85,
     overflow: 'scroll',
   },
   menu_page: {

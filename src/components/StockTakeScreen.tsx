@@ -5,7 +5,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { useMutation, useQuery } from '@apollo/client';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { STOCK_TAKE_MUTATION, STOCK_TAKES_QUERY, PRODUCTS_QUERY } from '../graphql/mutations/stockTaking';
+import { STOCK_TAKE_MUTATION, STOCK_TAKES_QUERY, PRODUCTS_QUERY,deleteStockTakeItemMutation } from '../graphql/mutations/stockTaking';
 import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,6 +21,8 @@ const StockTakingScreen = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // New state for button disabling
+  const [deleteStockTakeItem] = useMutation(deleteStockTakeItemMutation);
+
 
   //const { data, loading, error } = useQuery(PRODUCTS_QUERY);
   const { data: productsData, refetch: refetchProducts } = useQuery(PRODUCTS_QUERY, {
@@ -58,16 +60,33 @@ const StockTakingScreen = () => {
     }
   };
 
+
+  const removeItem = async (id) => {
+    //const  = (id) => {
+      try {
+        const response = await deleteStockTakeItem({ variables: { id } });
+        if (response?.data) {
+          refetchStocks(); // Refetch the data when the date is changed
+          refetchProducts();
+        } else {
+          throw new Error('Failed to Delete stock take item');
+        }
+      } catch (error) {
+        console.error('Error during online deletion:', error);
+        Alert.alert('Error', 'Failed to Delete stock take item .');
+      }
+  };
+
   const handleSubmit = async () => {
     if (isSubmitting) return; // Prevent double clicks
 
     setIsSubmitting(true); // Disable the button on the first click
-    console.log(JSON.stringify(productsData.allStockTakeProducts))
+    //console.log(JSON.stringify(productsData.allStockTakeProducts))
     const selectedProductData = productsData.allStockTakeProducts.find(product => product.id === selectedProduct);
     const takenAt = date.toISOString().split('T')[0]; // Format date as yyyy-m-d
 
     if (physicalCount === '') {
-      console.log('empty returning');
+      //console.log('empty returning');
       setIsSubmitting(false); // Re-enable the button if validation fails
       return false;
     }
@@ -79,13 +98,25 @@ const StockTakingScreen = () => {
     };
 
     const handleSubmitOnline = async () => {
-      await createStockTake({
-        variables: { input: stockTake },
-      });
-      refetchStocks(); // Refresh the list after submission
-      refetchProducts();
-      Alert.alert('Success', 'Stock take submitted successfully.');
+      try {
+        const response = await createStockTake({
+          variables: { input: stockTake },
+        });
+    
+        if (response?.data) {
+          // Only refetch if the response is successful and contains data
+          refetchStocks(); // Refresh the stock list after successful submission
+          refetchProducts(); // Refresh the product list after successful submission
+          console.log('Success', 'Stock take submitted successfully.');
+        } else {
+          throw new Error('Failed to submit stock take');
+        }
+      } catch (error) {
+        console.error('Error during online submission:', error);
+        console.error('Error', 'Failed to submit stock take.');
+      }
     };
+    
 
     const handleSubmitOffline = async () => {
       const updatedStockTakes = [...localStockTakes, stockTake];
@@ -147,6 +178,9 @@ const StockTakingScreen = () => {
       <Text style={styles.itemText}>{item.physical_count}</Text>
       <Text style={styles.itemText}>{item.system_count}</Text>
       <Text style={styles.itemText}>{item.reconciliation_difference}</Text>
+      <TouchableOpacity onPress={() => removeItem(item.id)}>
+        <Text style={styles.removeItem}><Icon name="trash" size={20} color="red" /></Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -199,6 +233,7 @@ const StockTakingScreen = () => {
           <Text style={styles.headerText}>Physical count</Text>
           <Text style={styles.headerText}>System count</Text>
           <Text style={styles.headerText}>Diff</Text>
+          <Text style={styles.toggleButton}><Icon name="tasks" size={20} color="red" /></Text>
         </View>
         <FlatList
           data={stockTakesData?.stockTakes || []}
@@ -242,7 +277,7 @@ const styles = StyleSheet.create({
   },
   active_page: {
     position: 'relative',
-    height: height * 0.65,
+    height: height * 0.85,
     overflow: 'scroll',
   },
   menu_page: {
@@ -290,6 +325,10 @@ const styles = StyleSheet.create({
   datePickerText: {
     fontSize: width * 0.04, // Responsive font size
     color: '#333',
+  },
+  removeItem: {
+    color: 'red',
+    fontSize: width * 0.05, // Responsive icon size
   },
 });
 

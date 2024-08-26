@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     //bottom: height * 0.05, // Responsive bottom position
     overflow: 'scroll',
-    height: height * 0.65, // Responsive height
+    height: height * 0.85, // Responsive height
   },
   menu_page:{
     position: 'absolute',

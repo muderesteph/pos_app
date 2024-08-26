@@ -41,3 +41,12 @@ export const PRODUCTS_QUERY = gql`
     }
   }
 `;
+
+export const deleteStockTakeItemMutation = gql`
+  mutation deleteStockTakeItem($id: ID!) {
+    deleteStockTakeItem(id: $id){
+        message
+        success
+    }
+  }
+`;
