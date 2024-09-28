@@ -39,15 +39,16 @@ const StockItemsScreen = () => {
     refetch();
   };
 
-  const handleDeleteStockItem = (id) => {
-    navigation.navigate('AdminAuth', { screenName: 'StockItems', onSuccess: async () => {
+  const handleDeleteStockItem = async (id) => {
+    //navigation.navigate('AdminAuth', { screenName: 'StockItems', onSuccess: async () => {
       if (isOnline) {
         await deleteStockItem({ variables: { id } });
         refetch();
       } else {
         Alert.alert('Action not available offline', 'You need to be online to delete a stock item.');
       }
-    } });
+    //} 
+ // });
   };
 
   const renderTableHeader = () => (
@@ -55,8 +56,8 @@ const StockItemsScreen = () => {
       <Text style={styles.headerText}>Date</Text>
       <Text style={styles.headerText}>Product Name</Text>
       <Text style={styles.headerText}>Quantity</Text>
-      <Text style={styles.headerText}>Selling Price</Text>
-      <Text style={styles.headerText}>Actions</Text>
+      <Text style={styles.tableHeaderCenter}>Selling Price</Text>
+      <Text style={styles.tableHeaderCenter}><Icon name="tasks" size={20} color="red" /></Text>
     </View>
   );
 
@@ -113,6 +114,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  tableHeaderCenter:{
+    fontWeight: 'bold',
+    width: width * 0.3,
+    flex: 1,
+    textAlign: 'right',
+    fontSize: width * 0.04, 
+  },
   tableRow: {
     flexDirection: 'row',
     paddingVertical: 10,
@@ -121,7 +129,7 @@ const styles = StyleSheet.create({
   },
   rowText: {
     flex: 1,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   totals_page: {
     position: 'absolute',

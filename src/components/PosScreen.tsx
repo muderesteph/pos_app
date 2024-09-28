@@ -209,8 +209,8 @@ const PosScreen = () => {
         <View style={styles.tableHeader}>
           <Text style={styles.headerText}>Product Name</Text>
           <Text style={styles.headerText}>Quantity</Text>
-          <Text style={styles.headerText}>Subtotal</Text>
-          <Text style={styles.headerText}>Actions</Text>
+          <Text style={styles.headerTextright}>Subtotal</Text>
+          <Text style={styles.headerTextright}><Icon name="tasks" size={20} color="red" /></Text>
         </View>
         <FlatList
           data={cart}
@@ -236,7 +236,7 @@ const PosScreen = () => {
                 </TouchableOpacity>
               </View>
 
-              <Text style={styles.itemText}>{item.subtotal.toFixed(2)}</Text>
+              <Text style={styles.itemTextleft}>{item.subtotal.toFixed(2)}</Text>
               <TouchableOpacity onPress={() => removeItem(item.id)}>
                 <Text style={styles.removeItem}><Icon name="trash" size={20} color="red" /></Text>
               </TouchableOpacity>
@@ -281,6 +281,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: width * 0.04, // Responsive font size
   },
+  headerTextright:{
+    fontWeight: 'bold',
+    flex: 1,
+    textAlign: 'right',
+    fontSize: width * 0.04, // Responsive font size
+  },
   cartItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -294,6 +300,11 @@ const styles = StyleSheet.create({
   itemText: {
     flex: 1,
     textAlign: 'center',
+    fontSize: width * 0.04, // Responsive font size
+  },
+  itemTextleft:{
+    flex: 1,
+    textAlign: 'left',
     fontSize: width * 0.04, // Responsive font size
   },
   quantityContainer: {

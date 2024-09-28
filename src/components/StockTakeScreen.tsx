@@ -232,8 +232,8 @@ const StockTakingScreen = () => {
           <Text style={styles.headerText}>Product Name</Text>
           <Text style={styles.headerText}>Physical count</Text>
           <Text style={styles.headerText}>System count</Text>
-          <Text style={styles.headerText}>Diff</Text>
-          <Text style={styles.toggleButton}><Icon name="tasks" size={20} color="red" /></Text>
+          <Text style={styles.tableHeaderCenter}>Diff</Text>
+          <Text style={styles.tableHeaderCenter}><Icon name="tasks" size={20} color="red" /></Text>
         </View>
         <FlatList
           data={stockTakesData?.stockTakes || []}
@@ -270,6 +270,13 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontSize: width * 0.04, // Responsive font size
+  },
+  tableHeaderCenter:{
+    fontWeight: 'bold',
+    width: width * 0.3,
+    flex: 1,
+    textAlign: 'right',
+    fontSize: width * 0.04, 
   },
   container: {
     flex: 1,
