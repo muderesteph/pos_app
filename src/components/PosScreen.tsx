@@ -18,6 +18,9 @@ const PosScreen = () => {
   const [cart, setCart] = useState([]);
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([]);
+  const [amountTendered, setAmountTendered] = useState('');
+  const [isOrderButtonDisabled, setIsOrderButtonDisabled] = useState(true); // For disabling order button
+  const [change, setChange] = useState(0); // To store the change value
   const { data, loading, error } = useQuery(PRODUCTS_QUERY, {
     skip: !isOnline,
   });
@@ -91,9 +94,9 @@ const PosScreen = () => {
   };
 
   const parseFloat_nancl = (amnt) => {
-    var cas = parseFloat(amnt)
+    var cas = parseFloat(amnt);
     return isNaN(cas) ? 0 : cas;
-  }
+  };
 
   const handleProductSelection = (value) => {
     const product = products.find(p => p.value === value);
@@ -136,8 +139,25 @@ const PosScreen = () => {
     return cart.reduce((total, item) => total + item.subtotal, 0).toFixed(2);
   };
 
+  // Calculate change and disable button based on amount tendered
+  useEffect(() => {
+    const grandTotal = parseFloat(calculateGrandTotal());
+    const tendered = parseFloat(amountTendered);
+    
+    if (isNaN(tendered) || tendered < grandTotal) {
+      setIsOrderButtonDisabled(true);
+      setChange(0);
+    } else {
+      setIsOrderButtonDisabled(false);
+      setChange((tendered - grandTotal).toFixed(2));
+    }
+  }, [amountTendered, cart]);
+
   const placePosOrderHandler = async () => {
     const orderInput = {
+      amountTendered: parseFloat(amountTendered),
+      grandTotal: parseFloat(calculateGrandTotal()),
+      change: parseFloat(change),
       items: cart.map(item => ({
         productId: item.id,
         quantity: item.quantity,
@@ -145,11 +165,13 @@ const PosScreen = () => {
       })),
     };
 
+
     if (isOnline) {
       try {
         const { data } = await placePosOrder({ variables: { input: orderInput } });
-        Alert.alert('Order Placed', `Order ID: ${data.placePosOrder.order.id}`);
+        Alert.alert('Order Placed v', `Order ID: ${data.placePosOrder.order.id}`);
         setCart([]);
+        setAmountTendered(''); // Clear the amount tendered field
       } catch (error) {
         console.error('Error placing order:', error);
         Alert.alert('Error', `Failed to place order: ${error.message}`);
@@ -158,6 +180,7 @@ const PosScreen = () => {
       saveOrderToStorage(orderInput);
       Alert.alert('Order Saved', 'Your order will be placed once you are back online');
       setCart([]);
+      setAmountTendered(''); // Clear the amount tendered field
     }
   };
 
@@ -177,10 +200,20 @@ const PosScreen = () => {
       const storedOrders = await AsyncStorage.getItem('offlineOrders');
       if (storedOrders) {
         const offlineOrders = JSON.parse(storedOrders);
+        const successfulOrders = [];
+
         for (const order of offlineOrders) {
-          await placePosOrder({ variables: { input: order } });
+          try {
+            await placePosOrder({ variables: { input: order } });
+            successfulOrders.push(order);
+          } catch (error) {
+            console.error('Error syncing offline orders:', error);
+          }
         }
-        await AsyncStorage.removeItem('offlineOrders');
+
+        // Remove only successfully synced orders from local storage
+        const remainingOrders = offlineOrders.filter(order => !successfulOrders.includes(order));
+        await AsyncStorage.setItem('offlineOrders', JSON.stringify(remainingOrders));
       }
     } catch (error) {
       console.error('Error syncing offline orders', error);
@@ -208,9 +241,9 @@ const PosScreen = () => {
       <View style={styles.active_page}>
         <View style={styles.tableHeader}>
           <Text style={styles.headerText}>Product Name</Text>
-          <Text style={styles.headerText}>Quantity</Text>
-          <Text style={styles.headerTextright}>Subtotal</Text>
-          <Text style={styles.headerTextright}><Icon name="tasks" size={20} color="red" /></Text>
+          <Text style={styles.headerTextRight}>Quantity</Text>
+          <Text style={styles.headerTextRight}>Subtotal</Text>
+          <Text style={styles.headerTextRight}><Icon name="tasks" size={20} color="red" /></Text>
         </View>
         <FlatList
           data={cart}
@@ -236,21 +269,38 @@ const PosScreen = () => {
                 </TouchableOpacity>
               </View>
 
-              <Text style={styles.itemTextleft}>{item.subtotal.toFixed(2)}</Text>
+              <Text style={styles.itemTextsubtotal}>{item.subtotal.toFixed(2)}</Text>
               <TouchableOpacity onPress={() => removeItem(item.id)}>
                 <Text style={styles.removeItem}><Icon name="trash" size={20} color="red" /></Text>
               </TouchableOpacity>
             </View>
           )}
         />
-      <View style={styles.blank_forscrolling}>
+      <View style={styles.blank_forscrolling} />
+      </View>
 
-      </View>
-      </View>
+      {/* Grand Total, Amount Tendered, and Change Section */}
       <View style={styles.totals_page}>
-          <Text style={styles.grandTotalText}>Grand Total: {calculateGrandTotal()}</Text>
-          <Button title="Place Order" onPress={placePosOrderHandler} style={styles.placeOrderButton} />
+        <Text style={styles.grandTotalText}>Grand Total: {calculateGrandTotal()}</Text>
+        <TextInput
+          placeholder="Amount Tendered"
+          style={[
+            styles.amountTenderedInput,
+            parseFloat(amountTendered) < parseFloat(calculateGrandTotal()) && styles.amountTenderedInputDanger,
+          ]}
+          value={amountTendered}
+          onChangeText={setAmountTendered}
+          keyboardType="numeric"
+        />
+        <Text style={styles.changeText}>Change: {change}</Text>
+        <Button
+          title="Place Order"
+          onPress={placePosOrderHandler}
+          style={styles.placeOrderButton}
+          disabled={isOrderButtonDisabled} // Disable button based on validation
+        />
       </View>
+
       <View style={styles.menu_page}>
         <TouchableOpacity style={styles.toggleButton} onPress={() => setDropdownVisible(true)}>
           <Icon name="bars" size={30} color="#000" />
@@ -276,16 +326,17 @@ const styles = StyleSheet.create({
     borderColor: '#d0d0d0',
   },
   headerText: {
+    width: width * 0.7,
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'center',
-    fontSize: width * 0.04, // Responsive font size
+    fontSize: width * 0.018, // Responsive font size
   },
-  headerTextright:{
+  headerTextRight: {
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'right',
-    fontSize: width * 0.04, // Responsive font size
+    fontSize: width * 0.018, // Responsive font size
   },
   cartItem: {
     flexDirection: 'row',
@@ -298,80 +349,89 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffcccc',
   },
   itemText: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: width * 0.04, // Responsive font size
-  },
-  itemTextleft:{
+    width: width * 0.7,
     flex: 1,
     textAlign: 'left',
-    fontSize: width * 0.04, // Responsive font size
+    fontSize: width * 0.018, // Responsive font size
+  },
+  itemTextsubtotal: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: width * 0.018, // Responsive font size
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   quantityButton: {
-    fontSize: width * 0.05, // Responsive button size
+    fontSize: width * 0.018, // Responsive button size
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  blank_forscrolling:{
-     height:height*0.05,
+  blank_forscrolling: {
+    height: height * 0.05,
   },
   quantityInput: {
-    width: width * 0.1, // Responsive input width
+    width: width * 0.05, // Responsive input width
     textAlign: 'center',
     borderWidth: 1,
     borderColor: '#d0d0d0',
-    fontSize: width * 0.04, // Responsive font size
+    fontSize: width * 0.01, // Responsive font size
   },
   grandTotalText: {
     fontWeight: 'bold',
     textAlign: 'right',
     padding: 16,
-    fontSize: width * 0.05, // Responsive font size
+    fontSize: width * 0.019, // Responsive font size
+  },
+  amountTenderedInput: {
+    borderWidth: 1,
+    borderColor: '#d0d0d0',
+    padding: 8,
+    marginVertical: 10,
+    fontSize: width * 0.019,
+    textAlign: 'right',
+  },
+  amountTenderedInputDanger: {
+    borderColor: 'red',
+  },
+  changeText: {
+    fontSize: width * 0.019,
+    marginBottom: 10,
+    textAlign: 'center',
   },
   removeItem: {
     color: 'red',
-    fontSize: width * 0.05, // Responsive icon size
+    fontSize: width * 0.02, // Responsive icon size
   },
   toggleButton: {
     position: 'absolute',
-    bottom:0, // Responsive bottom margin
-    //left: width * 0.05, // Responsive left margin
+    bottom: 0, // Responsive bottom margin
   },
   placeOrderButton: {
     marginBottom: height * 0.1,  // Push the button up slightly based on screen height
   },
-  
-  totals_page:{
+  totals_page: {
     position: 'absolute',
     bottom: height * 0.005, // Responsive bottom position
     textAlign: 'right',
-    height: height * 0.15, // Responsive height
-    //top:height * 0.48,
-    right:width*0.01,
-    backgroundColor:'white'
+    height: height * 0.25, // Increased height for additional fields
+    right: width * 0.01,
+    backgroundColor: 'white',
   },
-  dropdown_style:{
+  dropdown_style: {
     height: height * 0.15,
   },
-
-
-
-  active_page:{
+  active_page: {
     position: 'relative',
-    //bottom: height * 0.05, // Responsive bottom position
     overflow: 'scroll',
     height: height * 0.65, // Responsive height
   },
-  menu_page:{
+  menu_page: {
     position: 'absolute',
     bottom: 0,
-    left:width*0.01
+    left: width * 0.01,
   },
 });
-
 
 export default PosScreen;

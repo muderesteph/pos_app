@@ -19,7 +19,7 @@ import AddStockItemScreen from './components/AddStockItemScreen';
 import { RootStackParamList } from './navigation/RootStackParamList';
 
 const client = new ApolloClient({
-  uri: 'http://pos.college.co.zw/graphql',
+  uri: 'https://pos.college.co.zw/graphql',
   cache: new InMemoryCache(),
 });
 

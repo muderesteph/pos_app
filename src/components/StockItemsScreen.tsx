@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button,FlatList, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Dimensions, Alert } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { listStocksQuery } from '../graphql/mutations/addStockItem';
+import { listStocksQuery, deleteStockMutation } from '../graphql/mutations/addStockItem';
 import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
@@ -13,8 +13,8 @@ const { width, height } = Dimensions.get('window');
 const StockItemsScreen = () => {
   const [isOnline, setIsOnline] = useState(true);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-
   const { data, refetch } = useQuery(listStocksQuery);
+  const [deleteStockItem] = useMutation(deleteStockMutation); // Add deleteStockItem mutation
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -39,16 +39,30 @@ const StockItemsScreen = () => {
     refetch();
   };
 
-  const handleDeleteStockItem = async (id) => {
-    //navigation.navigate('AdminAuth', { screenName: 'StockItems', onSuccess: async () => {
-      if (isOnline) {
-        await deleteStockItem({ variables: { id } });
-        refetch();
-      } else {
-        Alert.alert('Action not available offline', 'You need to be online to delete a stock item.');
-      }
-    //} 
- // });
+  // Handle the delete action with confirmation alert
+  const handleDeleteStockItem = (id) => {
+    Alert.alert(
+      'Confirm Delete',
+      'Are you sure you want to delete this stock item?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: async () => {
+            if (isOnline) {
+              await deleteStockItem({ variables: { id } });
+              refetch(); // Refresh the stock list after deletion
+            } else {
+              Alert.alert('Action not available offline', 'You need to be online to delete a stock item.');
+            }
+          },
+          style: 'destructive',
+        },
+      ]
+    );
   };
 
   const renderTableHeader = () => (
@@ -118,8 +132,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: width * 0.3,
     flex: 1,
-    textAlign: 'right',
-    fontSize: width * 0.04, 
+    textAlign: 'right' 
   },
   tableRow: {
     flexDirection: 'row',
