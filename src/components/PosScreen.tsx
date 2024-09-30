@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   quantityButton: {
-    fontSize: width * 0.018, // Responsive button size
+    fontSize: width * 0.025, // Responsive button size
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     borderWidth: 1,
     borderColor: '#d0d0d0',
-    fontSize: width * 0.01, // Responsive font size
+    fontSize: width * 0.019, // Responsive font size
   },
   grandTotalText: {
     fontWeight: 'bold',
