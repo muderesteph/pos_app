@@ -10,6 +10,7 @@ import PosScreen from './components/PosScreen';
 import StockTakeScreen from './components/StockTakeScreen';
 import StockItemsScreen from './components/StockItemsScreen';
 import AddStockItemScreen from './components/AddStockItemScreen';
+import AddPriceAdjustmentScreen from './components/AddPriceAdjustmentScreen';
 import { RootStackParamList } from './navigation/RootStackParamList';
 
 // Import the background sync utility
@@ -40,6 +41,7 @@ const App = () => {
           <Stack.Screen name="StockItems" component={StockItemsScreen} />
           <Stack.Screen name="StockTake" component={StockTakeScreen} />
           <Stack.Screen name="AddStockItem" component={AddStockItemScreen} />
+          <Stack.Screen name="AddPriceAdjustment" component={AddPriceAdjustmentScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApolloProvider>

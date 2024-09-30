@@ -27,6 +27,7 @@ const AdminAuthScreen = ({ route, navigation }) => {
         const response = await adminLogin({ variables: { pin } });
         if (response.data.posUserLogin.user.roleId === 1) {
           await AsyncStorage.setItem('adminAuthorized', 'true');
+          setPin(''); // Clear the PIN after successful authentication
           navigation.navigate(screenName);
         } else {
           Alert.alert('Authentication failed', 'Invalid PIN.');
@@ -38,6 +39,7 @@ const AdminAuthScreen = ({ route, navigation }) => {
     } else {
       const storedAdminAuthorized = await AsyncStorage.getItem('adminAuthorized');
       if (storedAdminAuthorized === 'true') {
+        setPin(''); // Clear the PIN if the user is authorized offline
         navigation.navigate(screenName);
       } else {
         Alert.alert('Error', 'No offline access. Please log in while online.');
