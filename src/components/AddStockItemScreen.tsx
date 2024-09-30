@@ -40,7 +40,7 @@ const AddStockItemScreen = () => {
   const navigation = useNavigation();
   const [addStockItem] = useMutation(addStockMutation);
 
-  const { data, loading, error } = useQuery(PRODUCTS_QUERY);
+  const { data, loading, error, refetch } = useQuery(PRODUCTS_QUERY);
 
   const handleAddStockItem = async () => {
     if ((!selectedProduct && !productName) || !sellingPrice || !qty || !costPrice || !transportCost) {
@@ -82,8 +82,23 @@ const AddStockItemScreen = () => {
     product.name.toLowerCase().includes(query.toLowerCase())
   );
 
+
+  const refreshProducts = async () => {
+    // Force re-fetch products and overwrite local storage
+    try {
+      await refetch(); // This refetches the products from the server
+      //await fetchProducts(); // Update local state and save to storage
+      Alert.alert('Success', 'Products refreshed from server');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to refresh products');
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.refreshButton} onPress={refreshProducts}>
+        <Icon name="refresh" size={30} color="#000" />
+      </TouchableOpacity>
       <View style={styles.active_page}>
         <Text>Select Product or Enter New Product Name</Text>
         <Autocomplete
@@ -234,6 +249,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     left: width * 0.01,
+  },
+  refreshIcon: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    zIndex: 10, // To ensure it stays on top
   },
 });
 
