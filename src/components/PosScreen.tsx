@@ -112,7 +112,7 @@ const PosScreen = () => {
     if (existingProduct) {
       Alert.alert('Product already in cart', 'You can update the quantity in the cart.');
     } else {
-      setCart([...cart, { ...product, quantity: 1, subtotal: parseFloat_nancl(product.priceHtml.regularPrice) }]);
+      setCart([...cart, { ...product, quantity: 1, subtotal: parseFloat_nancl(product.priceHtml.finalPrice) }]);
     }
   };
 
@@ -123,7 +123,7 @@ const PosScreen = () => {
         return {
           ...item,
           quantity: isNaN(newQuantity) ? 0 : newQuantity,
-          subtotal: (isNaN(newQuantity) ? 0 : newQuantity) * parseFloat(item.priceHtml.regularPrice),
+          subtotal: (isNaN(newQuantity) ? 0 : newQuantity) * parseFloat(item.priceHtml.finalPrice),
         };
       }
       return item;
@@ -162,7 +162,7 @@ const PosScreen = () => {
       items: cart.map(item => ({
         productId: item.id,
         quantity: item.quantity,
-        price: item.priceHtml.regularPrice,
+        price: item.priceHtml.finalPrice,
       })),
     };
 
