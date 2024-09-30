@@ -42,7 +42,12 @@ query AllProducts {
       data {
         id
         name
+        priceHtml {
+          finalPrice
+          currencyCode
+        }
       }
     }
   }
 `;
+ 

@@ -82,12 +82,10 @@ const AddStockItemScreen = () => {
     product.name.toLowerCase().includes(query.toLowerCase())
   );
 
-
   const refreshProducts = async () => {
     // Force re-fetch products and overwrite local storage
     try {
       await refetch(); // This refetches the products from the server
-      //await fetchProducts(); // Update local state and save to storage
       Alert.alert('Success', 'Products refreshed from server');
     } catch (error) {
       Alert.alert('Error', 'Failed to refresh products');
@@ -116,6 +114,7 @@ const AddStockItemScreen = () => {
                 setQuery(item.name);
                 setSelectedProduct(item.id); // Set product ID for existing products
                 setProductName(''); // Clear product name for existing products
+                setSellingPrice(item.priceHtml.finalPrice || ''); // Set sellingPrice to finalPrice
               }}>
                 <View style={styles.item}>
                   <Text>{item.name}</Text>
@@ -250,7 +249,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: width * 0.01,
   },
-  refreshIcon: {
+  refreshButton: {
     position: 'absolute',
     top: 16,
     right: 16,

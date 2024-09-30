@@ -7,6 +7,7 @@ import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { listStocksQuery, deleteStockMutation } from '../graphql/mutations/addStockItem';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';  // Import moment for date formatting
 
 const { width, height } = Dimensions.get('window');
 
@@ -65,6 +66,16 @@ const StockItemsScreen = () => {
     );
   };
 
+  const refreshStocks = async () => {
+    // Force re-fetch products and overwrite local storage
+    try {
+      await refetch(); // This refetches the products from the server
+      Alert.alert('Success', 'Products refreshed from server');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to refresh products');
+    }
+  };
+
   const renderTableHeader = () => (
     <View style={styles.tableHeader}>
       <Text style={styles.headerText}>Date</Text>
@@ -77,7 +88,7 @@ const StockItemsScreen = () => {
 
   const renderItem = ({ item }) => (
     <View style={styles.tableRow}>
-      <Text style={styles.rowText}>{item.created_at}</Text>
+      <Text style={styles.rowText}>{moment(item.created_at).format('ddd D MMMM YYYY\nHH:mm')}</Text>
       <Text style={styles.rowText}>{item.product_name}</Text>
       <Text style={styles.rowText}>{item.qty}</Text>
       <Text style={styles.rowText}>{item.selling_price}</Text>
@@ -89,6 +100,9 @@ const StockItemsScreen = () => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.refreshButton} onPress={refreshStocks}>
+        <Icon name="refresh" size={30} color="#000" />
+      </TouchableOpacity>
       <View style={styles.active_page}>
         <Text>Stock Items</Text>
         {renderTableHeader()}
@@ -128,7 +142,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  tableHeaderCenter:{
+  tableHeaderCenter: {
     fontWeight: 'bold',
     width: width * 0.3,
     flex: 1,
