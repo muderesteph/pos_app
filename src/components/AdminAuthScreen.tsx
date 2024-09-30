@@ -58,6 +58,8 @@ const AdminAuthScreen = ({ route, navigation }) => {
         value={pin}
         onChangeText={setPin}
         autoCompleteType="off" // Disable autofill
+        onSubmitEditing={handleLogin}
+        returnKeyType="done"
       />
       <Button title="Submit" onPress={handleLogin} />
     </View>

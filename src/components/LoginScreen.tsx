@@ -68,6 +68,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         onChangeText={setPin}
         secureTextEntry
         keyboardType="numeric"
+        onSubmitEditing={handleLogin}
+        returnKeyType="done"
       />
       <Button title="Login" onPress={handleLogin} disabled={loading} />
       {loading && <ActivityIndicator />}
