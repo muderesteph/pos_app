@@ -21,7 +21,7 @@ const PosScreen = () => {
   const [amountTendered, setAmountTendered] = useState('');
   const [isOrderButtonDisabled, setIsOrderButtonDisabled] = useState(true); // For disabling order button
   const [change, setChange] = useState(0); // To store the change value
-  const { data, loading, error } = useQuery(PRODUCTS_QUERY, {
+  const { data, loading, error, refetch  } = useQuery(PRODUCTS_QUERY, {
     skip: !isOnline,
   });
   const [placePosOrder] = useMutation(PLACE_POS_ORDER_MUTATION);
@@ -62,6 +62,7 @@ const PosScreen = () => {
       return;
     }
     if (data && data.allProducts) {
+      console.log(data.allProducts)
       const productsData = data.allProducts.data.map(product => ({
         label: product.name,
         value: product.id,
@@ -220,8 +221,22 @@ const PosScreen = () => {
     }
   };
 
+  const refreshProducts = async () => {
+    // Force re-fetch products and overwrite local storage
+    try {
+      await refetch(); // This refetches the products from the server
+      await fetchProducts(); // Update local state and save to storage
+      Alert.alert('Success', 'Products refreshed from server');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to refresh products');
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.refreshButton} onPress={refreshProducts}>
+        <Icon name="refresh" size={30} color="#000" />
+      </TouchableOpacity>
       <View style={styles.dropdown_style}>
         <DropDownPicker
           open={open}
@@ -431,6 +446,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     left: width * 0.01,
+  },
+  refreshIcon: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    zIndex: 10, // To ensure it stays on top
   },
 });
 
