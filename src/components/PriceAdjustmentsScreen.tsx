@@ -58,7 +58,7 @@ const PriceAdjustmentsScreen = () => {
               <Text style={styles.rowText}>{item.amount}</Text>
               <Text style={styles.rowText}>{item.old_price}</Text>
               <Text style={styles.rowText}>{item.new_price}</Text>
-              <Text style={styles.rowText}>{moment(item.added_at).format('ddd D MMMM YYYY\nHH:mm')}</Text>
+              <Text style={styles.rowText}>{moment(item.added_at).format('ddd D MMMM YYYY HH:mm')}</Text>
             </View>
           )}
           keyExtractor={(item) => item.id.toString()}
