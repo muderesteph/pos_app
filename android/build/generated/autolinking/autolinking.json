@@ -246,6 +246,30 @@
           "isPureCxxDependency": false
         }
       }
+    },
+    "react-native-version-check": {
+      "root": "/home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-version-check",
+      "name": "react-native-version-check",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-version-check/react-native-version-check.podspec",
+          "version": "3.4.7",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-version-check/android",
+          "packageImportPath": "import io.xogus.reactnative.versioncheck.RNVersionCheckPackage;",
+          "packageInstance": "new RNVersionCheckPackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "/home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-version-check/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
     }
   },
   "commands": [
