@@ -85,14 +85,37 @@ const CashCollectionsScreen = () => {
     setAmount(''); // Clear the amount field after submission
   };
 
-  const handleDeleteCollection = async (id) => {
-    if (isOnline) {
-      await deleteCashCollection({ variables: { id } });
-      refetch();
-    } else {
-      Alert.alert('Action not available offline', 'You need to be online to delete a cash collection.');
-    }
+  const handleDeleteCollection = (id) => {
+    Alert.alert(
+      "Confirm Deletion",
+      "Are you sure you want to delete this cash collection?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            if (isOnline) {
+              try {
+                await deleteCashCollection({ variables: { id } });
+                refetch();
+                Alert.alert('Success', 'Cash collection deleted successfully.');
+              } catch (error) {
+                Alert.alert('Error', 'Failed to delete cash collection.');
+              }
+            } else {
+              Alert.alert('Action not available offline', 'You need to be online to delete a cash collection.');
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
+  
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
