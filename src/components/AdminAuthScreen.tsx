@@ -27,7 +27,7 @@ const AdminAuthScreen = ({ route, navigation }) => {
         const response = await adminLogin({ variables: { pin } });
         if (response.data.posUserLogin.user.roleId === 1) {
           await AsyncStorage.setItem('adminAuthorized', 'true');
-          //onSuccess();
+          setPin(''); // Clear the PIN after successful authentication
           navigation.navigate(screenName);
         } else {
           Alert.alert('Authentication failed', 'Invalid PIN.');
@@ -35,12 +35,12 @@ const AdminAuthScreen = ({ route, navigation }) => {
       } catch (error) {
         console.error('Login error:', error);
         Alert.alert('Error', 'Failed to authenticate. Please try again.');
-
       }
     } else {
       const storedAdminAuthorized = await AsyncStorage.getItem('adminAuthorized');
       if (storedAdminAuthorized === 'true') {
-        navigation.navigate(screenName);  // Navigate to the intended screen
+        setPin(''); // Clear the PIN if the user is authorized offline
+        navigation.navigate(screenName);
       } else {
         Alert.alert('Error', 'No offline access. Please log in while online.');
       }
@@ -57,6 +57,9 @@ const AdminAuthScreen = ({ route, navigation }) => {
         placeholder="Enter PIN"
         value={pin}
         onChangeText={setPin}
+        autoCompleteType="off" // Disable autofill
+        onSubmitEditing={handleLogin}
+        returnKeyType="done"
       />
       <Button title="Submit" onPress={handleLogin} />
     </View>

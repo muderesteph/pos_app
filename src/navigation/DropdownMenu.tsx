@@ -37,6 +37,10 @@ const DropdownMenu = ({ isVisible, onClose }) => {
             <Icon name="list" size={20} color="#000" />
             <Text style={styles.menuText}>Stock Take</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('About')}>
+            <Icon name="shopping-cart" size={20} color="#000" />
+            <Text style={styles.menuText}>About</Text>
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     </Modal>

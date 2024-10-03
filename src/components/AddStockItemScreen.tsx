@@ -18,7 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
 import Autocomplete from 'react-native-autocomplete-input';
-import moment from 'moment';  // Import moment for date formatting
+import moment from 'moment'; // Import moment for date formatting
 
 import { addStockMutation, PRODUCTS_QUERY } from '../graphql/mutations/addStockItem';
 
@@ -36,6 +36,7 @@ const AddStockItemScreen = () => {
   const [createdAt, setCreatedAt] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [query, setQuery] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false); // State to track submission status
 
   const navigation = useNavigation();
   const [addStockItem] = useMutation(addStockMutation);
@@ -43,6 +44,8 @@ const AddStockItemScreen = () => {
   const { data, loading, error, refetch } = useQuery(PRODUCTS_QUERY);
 
   const handleAddStockItem = async () => {
+    if (isSubmitting) return; // Prevent multiple submissions if already submitting
+
     if ((!selectedProduct && !productName) || !sellingPrice || !qty || !costPrice || !transportCost) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
@@ -58,15 +61,23 @@ const AddStockItemScreen = () => {
       created_at: createdAt.toISOString(),
     };
 
-    if (isOnline) {
-      await addStockItem({ variables: { input: stock } });
-    } else {
-      const offlineStocks = JSON.parse(await AsyncStorage.getItem('offlineStocks')) || [];
-      offlineStocks.push(stock);
-      await AsyncStorage.setItem('offlineStocks', JSON.stringify(offlineStocks));
-    }
+    setIsSubmitting(true); // Disable submission until done
 
-    navigation.navigate('StockItems'); // Redirect back to StockItemsScreen after adding the item
+    try {
+      if (isOnline) {
+        await addStockItem({ variables: { input: stock } });
+      } else {
+        const offlineStocks = JSON.parse(await AsyncStorage.getItem('offlineStocks')) || [];
+        offlineStocks.push(stock);
+        await AsyncStorage.setItem('offlineStocks', JSON.stringify(offlineStocks));
+      }
+
+      navigation.navigate('StockItems'); // Redirect back to StockItemsScreen after adding the item
+    } catch (error) {
+      Alert.alert('Error', 'Failed to add stock item.');
+    } finally {
+      setIsSubmitting(false); // Re-enable submission
+    }
   };
 
   const openDatePicker = () => setShowDatePicker(true);
@@ -78,16 +89,14 @@ const AddStockItemScreen = () => {
     }
   };
 
-  const filteredProducts = data?.allProducts?.data.filter(product =>
+  const filteredProducts = data?.posProducts?.filter(product =>
     product.name.toLowerCase().includes(query.toLowerCase())
   );
-
 
   const refreshProducts = async () => {
     // Force re-fetch products and overwrite local storage
     try {
       await refetch(); // This refetches the products from the server
-      //await fetchProducts(); // Update local state and save to storage
       Alert.alert('Success', 'Products refreshed from server');
     } catch (error) {
       Alert.alert('Error', 'Failed to refresh products');
@@ -116,6 +125,7 @@ const AddStockItemScreen = () => {
                 setQuery(item.name);
                 setSelectedProduct(item.id); // Set product ID for existing products
                 setProductName(''); // Clear product name for existing products
+                setSellingPrice(item.priceHtml.finalPrice || ''); // Set sellingPrice to finalPrice
               }}>
                 <View style={styles.item}>
                   <Text>{item.name}</Text>
@@ -182,7 +192,11 @@ const AddStockItemScreen = () => {
         )}
       </View>
       <View style={styles.totals_page}>
-        <Button title="Add Stock" onPress={handleAddStockItem} />
+        <Button
+          title={isSubmitting ? "Submitting..." : "Add Stock"}
+          onPress={handleAddStockItem}
+          disabled={isSubmitting} // Disable button while submitting
+        />
         <View style={styles.buttonSpacing} />
         <Button title="Cancel" onPress={() => navigation.goBack()} />
       </View>
@@ -250,7 +264,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: width * 0.01,
   },
-  refreshIcon: {
+  refreshButton: {
     position: 'absolute',
     top: 16,
     right: 16,
@@ -259,3 +273,4 @@ const styles = StyleSheet.create({
 });
 
 export default AddStockItemScreen;
+

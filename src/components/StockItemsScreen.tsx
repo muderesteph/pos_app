@@ -4,9 +4,10 @@ import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery, useMutation } from '@apollo/client';
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { listStocksQuery, deleteStockMutation } from '../graphql/mutations/addStockItem';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';  // Import moment for date formatting
 
 const { width, height } = Dimensions.get('window');
 
@@ -69,7 +70,6 @@ const StockItemsScreen = () => {
     // Force re-fetch products and overwrite local storage
     try {
       await refetch(); // This refetches the products from the server
-      //await fetchProducts(); // Update local state and save to storage
       Alert.alert('Success', 'Products refreshed from server');
     } catch (error) {
       Alert.alert('Error', 'Failed to refresh products');
@@ -88,7 +88,7 @@ const StockItemsScreen = () => {
 
   const renderItem = ({ item }) => (
     <View style={styles.tableRow}>
-      <Text style={styles.rowText}>{item.created_at}</Text>
+      <Text style={styles.rowText}>{moment(item.created_at).format('ddd D MMMM YYYY\nHH:mm')}</Text>
       <Text style={styles.rowText}>{item.product_name}</Text>
       <Text style={styles.rowText}>{item.qty}</Text>
       <Text style={styles.rowText}>{item.selling_price}</Text>
@@ -100,7 +100,7 @@ const StockItemsScreen = () => {
 
   return (
     <View style={styles.container}>
-       <TouchableOpacity style={styles.refreshButton} onPress={refreshStocks}>
+      <TouchableOpacity style={styles.refreshButton} onPress={refreshStocks}>
         <Icon name="refresh" size={30} color="#000" />
       </TouchableOpacity>
       <View style={styles.active_page}>
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  tableHeaderCenter:{
+  tableHeaderCenter: {
     fontWeight: 'bold',
     width: width * 0.3,
     flex: 1,
