@@ -43,8 +43,8 @@ const PosScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (data && data.allProducts) {
-      const productsData = data.allProducts.data.map(product => ({
+    if (data && data.posProducts) {
+      const productsData = data.posProducts.map(product => ({
         label: product.name,
         value: product.id,
         ...product,
@@ -58,12 +58,13 @@ const PosScreen = () => {
   const fetchProducts = async () => {
     if (loading) return;
     if (error) {
-      Alert.alert('Error', 'Failed to fetch products');
+      console.error('GraphQL Error:', error);
+      Alert.alert('Error', 'Failed to fetch products1');
       return;
     }
-    if (data && data.allProducts) {
-      console.log(data.allProducts)
-      const productsData = data.allProducts.data.map(product => ({
+    if (data && data.posProducts) {
+      //console.log(data.posProducts)
+      const productsData = data.posProducts.map(product => ({
         label: product.name,
         value: product.id,
         ...product,

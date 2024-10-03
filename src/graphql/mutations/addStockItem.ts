@@ -37,16 +37,13 @@ export const deleteStockMutation = gql`
 `;
 
 export const PRODUCTS_QUERY = gql`
-query AllProducts {
-    allProducts {
-      data {
+query PosProducts {
+    posProducts {
         id
         name
         priceHtml {
           finalPrice
-          currencyCode
         }
-      }
     }
   }
 `;
