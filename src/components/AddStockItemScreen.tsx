@@ -11,12 +11,12 @@ import {
   FlatList,
   TouchableWithoutFeedback
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';  // Updated to version 6.5.0
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery } from '@apollo/client';
 import { useNavigation } from '@react-navigation/native';
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
 import Autocomplete from 'react-native-autocomplete-input';
 import moment from 'moment';  // Import moment for date formatting
 
@@ -28,7 +28,10 @@ const AddStockItemScreen = () => {
   const [isOnline, setIsOnline] = useState(true);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState('');
+  const [productName, setProductName] = useState(''); // Field for new product name
   const [sellingPrice, setSellingPrice] = useState('');
+  const [costPrice, setCostPrice] = useState(''); // New field for cost price
+  const [transportCost, setTransportCost] = useState(''); // New field for transport cost
   const [qty, setQty] = useState(''); // New field for quantity
   const [createdAt, setCreatedAt] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -37,24 +40,26 @@ const AddStockItemScreen = () => {
   const navigation = useNavigation();
   const [addStockItem] = useMutation(addStockMutation);
 
-  const { data, loading, error } = useQuery(PRODUCTS_QUERY);
+  const { data, loading, error, refetch } = useQuery(PRODUCTS_QUERY);
 
   const handleAddStockItem = async () => {
-    if (!selectedProduct || !sellingPrice || !qty) {
+    if ((!selectedProduct && !productName) || !sellingPrice || !qty || !costPrice || !transportCost) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
 
     const stock = {
-      product_id: selectedProduct,
+      product_id: selectedProduct ? selectedProduct : null,
+      product_name: productName || null, // Use product name if it's a new product
       qty: qty,
       selling_price: sellingPrice,
+      cost_price: costPrice, // Submit the cost price
+      transport_cost: transportCost, // Submit the transport cost
       created_at: createdAt.toISOString(),
     };
 
     if (isOnline) {
-      //var product_id=stock.product_id
-      await addStockItem({ variables: {input:stock} });
+      await addStockItem({ variables: { input: stock } });
     } else {
       const offlineStocks = JSON.parse(await AsyncStorage.getItem('offlineStocks')) || [];
       offlineStocks.push(stock);
@@ -77,20 +82,40 @@ const AddStockItemScreen = () => {
     product.name.toLowerCase().includes(query.toLowerCase())
   );
 
+
+  const refreshProducts = async () => {
+    // Force re-fetch products and overwrite local storage
+    try {
+      await refetch(); // This refetches the products from the server
+      //await fetchProducts(); // Update local state and save to storage
+      Alert.alert('Success', 'Products refreshed from server');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to refresh products');
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.refreshButton} onPress={refreshProducts}>
+        <Icon name="refresh" size={30} color="#000" />
+      </TouchableOpacity>
       <View style={styles.active_page}>
-        <Text>Select Product</Text>
+        <Text>Select Product or Enter New Product Name</Text>
         <Autocomplete
           data={filteredProducts || []}
           defaultValue={query}
-          onChangeText={text => setQuery(text)}
+          onChangeText={text => {
+            setQuery(text);
+            setProductName(text); // Set product name for new products
+            setSelectedProduct(''); // Clear selected product when typing
+          }}
           flatListProps={{
             keyExtractor: item => item.id.toString(),
             renderItem: ({ item }) => (
               <TouchableWithoutFeedback onPress={() => {
                 setQuery(item.name);
-                setSelectedProduct(item.id);
+                setSelectedProduct(item.id); // Set product ID for existing products
+                setProductName(''); // Clear product name for existing products
               }}>
                 <View style={styles.item}>
                   <Text>{item.name}</Text>
@@ -98,11 +123,12 @@ const AddStockItemScreen = () => {
               </TouchableWithoutFeedback>
             ),
           }}
-          placeholder="Search Product"
+          placeholder="Search Product or Add New"
           inputContainerStyle={styles.autocompleteInputContainer}
           listContainerStyle={styles.autocompleteListContainer}
           style={styles.input}
         />
+
         <Text>Set Quantity</Text>
         <TextInput
           placeholder="Quantity"
@@ -111,6 +137,7 @@ const AddStockItemScreen = () => {
           keyboardType="numeric"
           style={styles.input}
         />
+        
         <Text>Set Selling Price</Text>
         <TextInput
           placeholder="Selling Price"
@@ -119,6 +146,25 @@ const AddStockItemScreen = () => {
           keyboardType="numeric"
           style={styles.input}
         />
+
+        <Text>Set Cost Price</Text>
+        <TextInput
+          placeholder="Cost Price"
+          value={costPrice}
+          onChangeText={setCostPrice}
+          keyboardType="numeric"
+          style={styles.input}
+        />
+
+        <Text>Set Estimated Transport Cost</Text>
+        <TextInput
+          placeholder="Transport Cost"
+          value={transportCost}
+          onChangeText={setTransportCost}
+          keyboardType="numeric"
+          style={styles.input}
+        />
+
         <Text>Select Date</Text>
         <TextInput
           placeholder="Select Date"
@@ -203,6 +249,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     left: width * 0.01,
+  },
+  refreshIcon: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    zIndex: 10, // To ensure it stays on top
   },
 });
 

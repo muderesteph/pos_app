@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View,Button, Text, Alert, TouchableOpacity, TextInput, Dimensions, ScrollView, StyleSheet } from 'react-native';
+import { View, Button, Text, Alert, TouchableOpacity, TextInput, Dimensions, ScrollView, StyleSheet } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery } from '@apollo/client';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';  // Updated to version 6.5.0
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
 import { listCashCollectionsQuery, addCashCollectionMutation, deleteCashCollectionMutation } from '../graphql/mutations/addCashCollection';
 
 const { width, height } = Dimensions.get('window');
@@ -35,10 +35,23 @@ const CashCollectionsScreen = () => {
 
   const syncOfflineData = async () => {
     const offlineCollections = JSON.parse(await AsyncStorage.getItem('offlineCollections')) || [];
+    const successfulIds = [];
+
     for (const collection of offlineCollections) {
-      await addCashCollection({ variables: collection });
+      try {
+        await addCashCollection({ variables: collection });
+        successfulIds.push(collection.id); // Collect successful submissions
+      } catch (error) {
+        console.error('Error syncing collection:', error);
+      }
     }
-    await AsyncStorage.removeItem('offlineCollections');
+
+    // Remove only successfully synced collections from local storage
+    const remainingCollections = offlineCollections.filter(
+      collection => !successfulIds.includes(collection.id)
+    );
+    await AsyncStorage.setItem('offlineCollections', JSON.stringify(remainingCollections));
+
     refetch();
   };
 
@@ -49,14 +62,19 @@ const CashCollectionsScreen = () => {
     }
 
     const collection = {
+      id: Date.now(), // Unique ID for offline storage
       amount: parseFloat(amount).toFixed(2), // Ensure 2 decimal places
       collected_at: createdAt.toISOString().split('T')[0], // Format date as yyyy-m-d
     };
 
     if (isOnline) {
-      await addCashCollection({ variables: collection });
-      refetch();
-      Alert.alert('Success', 'Cash collection added successfully.');
+      try {
+        await addCashCollection({ variables: collection });
+        refetch();
+        Alert.alert('Success', 'Cash collection added successfully.');
+      } catch (error) {
+        Alert.alert('Error', 'Failed to add collection online.');
+      }
     } else {
       const offlineCollections = JSON.parse(await AsyncStorage.getItem('offlineCollections')) || [];
       offlineCollections.push(collection);
@@ -86,7 +104,7 @@ const CashCollectionsScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.active_page}>
-        <Text>Cash Collections</Text>
+        <Text style={styles.label}>Cash Collection</Text>
 
         <View style={styles.form}>
           <TextInput
@@ -97,6 +115,7 @@ const CashCollectionsScreen = () => {
             style={styles.input}
           />
 
+          <Text style={styles.label}>Collection for Date</Text>
           <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
             <Text style={styles.datePickerText}>{createdAt.toISOString().split('T')[0]}</Text>
           </TouchableOpacity>
@@ -113,18 +132,18 @@ const CashCollectionsScreen = () => {
         </View>
 
         <ScrollView horizontal>
-          <View style={styles.table}>
+          <View style={[styles.table, { width: width }]}>
             <View style={styles.tableRow}>
               <Text style={styles.tableHeader}>Date</Text>
               <Text style={styles.tableHeader}>Amount</Text>
-              <Text style={styles.tableHeaderCenter}>Actions</Text>
+              <Text style={styles.tableHeader}>Actions</Text>
             </View>
 
             {data?.listCashCollections?.map((item) => (
               <View style={styles.tableRow} key={item.id}>
                 <Text style={styles.tableCell}>{item.collected_at}</Text>
                 <Text style={styles.tableCell}>{item.amount}</Text>
-                <TouchableOpacity style={styles.tableCell} onPress={() => handleDeleteCollection(item.id)}>
+                <TouchableOpacity style={styles.tableCellCentre} onPress={() => handleDeleteCollection(item.id)}>
                   <Icon name="trash" size={20} color="red" />
                 </TouchableOpacity>
               </View>
@@ -158,6 +177,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 8,
   },
+  label: {
+    fontSize: width * 0.015,
+    marginBottom: 8,
+    fontWeight: 'bold',
+  },
   datePickerButton: {
     marginBottom: 12,
     padding: 10,
@@ -166,7 +190,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   datePickerText: {
-    fontSize: width * 0.04,
+    fontSize: width * 0.02,
     color: '#333',
   },
   active_page: {
@@ -188,7 +212,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
   },
   table: {
-    width: '100%',
     marginTop: 20,
   },
   tableRow: {
@@ -201,20 +224,21 @@ const styles = StyleSheet.create({
   tableHeader: {
     fontWeight: 'bold',
     width: width * 0.3,
-    // flex: 1,
-    // textAlign: 'center',
-    fontSize: width * 0.04, 
+    fontSize: width * 0.02,
   },
-  tableHeaderCenter:{
+  tableHeaderCenter: {
     fontWeight: 'bold',
     width: width * 0.3,
-    flex: 1,
     textAlign: 'center',
-    fontSize: width * 0.04, 
+    fontSize: width * 0.02,
   },
   tableCell: {
     width: width * 0.3,
-    alignItems: 'center',
+    textAlign: 'left',
+  },
+  tableCellCentre: {
+    width: width * 0.3,
+    textAlign: 'center',
   },
 });
 

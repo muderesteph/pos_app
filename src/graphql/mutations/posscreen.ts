@@ -17,7 +17,7 @@ export const PRODUCTS_QUERY = gql`
           id
         }
         priceHtml {
-          regularPrice
+          finalPrice
           currencyCode
         }
       }

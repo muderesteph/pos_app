@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Dimensions, FlatList, Alert,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';  // Updated to version 2.5.5
 import { useMutation, useQuery } from '@apollo/client';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';  // Updated to version 6.5.0
 import { STOCK_TAKE_MUTATION, STOCK_TAKES_QUERY, PRODUCTS_QUERY,deleteStockTakeItemMutation } from '../graphql/mutations/stockTaking';
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -232,7 +232,7 @@ const StockTakingScreen = () => {
           <Text style={styles.headerText}>Product Name</Text>
           <Text style={styles.headerText}>Physical count</Text>
           <Text style={styles.headerText}>System count</Text>
-          <Text style={styles.tableHeaderCenter}>Diff</Text>
+          <Text style={styles.headerText}>Diff</Text>
           <Text style={styles.tableHeaderCenter}><Icon name="tasks" size={20} color="red" /></Text>
         </View>
         <FlatList
@@ -269,14 +269,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'center',
-    fontSize: width * 0.04, // Responsive font size
   },
   tableHeaderCenter:{
     fontWeight: 'bold',
     width: width * 0.3,
     flex: 1,
     textAlign: 'right',
-    fontSize: width * 0.04, 
   },
   container: {
     flex: 1,
@@ -309,6 +307,7 @@ const styles = StyleSheet.create({
   },
   stockTakeList: {
     marginTop: 20,
+    fontSize: width * 0.018
   },
   stockTakeItem: {
     flexDirection: 'row',
@@ -319,8 +318,8 @@ const styles = StyleSheet.create({
   },
   itemText: {
     flex: 1,
-    textAlign: 'center',
-    fontSize: width * 0.04, // Responsive font size
+    textAlign: 'left',
+    fontSize: width * 0.018, // Responsive font size
   },
   datePickerButton: {
     marginBottom: 12,

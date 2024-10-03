@@ -4,7 +4,7 @@ import { View, Text, Button, FlatList, StyleSheet,TouchableOpacity ,Dimensions} 
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery } from '@apollo/client';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
 import DropdownMenu from '../navigation/DropdownMenu';
 import { listPriceAdjustmentsQuery } from '../graphql/mutations/createPriceAdjustment';
 const { width, height } = Dimensions.get('window');
