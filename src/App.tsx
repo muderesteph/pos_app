@@ -18,7 +18,7 @@ import { RootStackParamList } from './navigation/RootStackParamList';
 //import { configureBackgroundSync } from './utils/backgroundSync';
 
 const client = new ApolloClient({
-  uri: 'https://pos.college.co.zw/graphql',
+  uri: 'https://posstaging.college.co.zw/graphql',
   cache: new InMemoryCache(),
 });
 

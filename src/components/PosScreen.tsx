@@ -19,9 +19,10 @@ const PosScreen = () => {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [amountTendered, setAmountTendered] = useState('');
-  const [isOrderButtonDisabled, setIsOrderButtonDisabled] = useState(true); // For disabling order button
-  const [change, setChange] = useState(0); // To store the change value
-  const { data, loading, error, refetch  } = useQuery(PRODUCTS_QUERY, {
+  const [isOrderButtonDisabled, setIsOrderButtonDisabled] = useState(true);
+  const [change, setChange] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false); // New state to control submission
+  const { data, loading, error, refetch } = useQuery(PRODUCTS_QUERY, {
     skip: !isOnline,
   });
   const [placePosOrder] = useMutation(PLACE_POS_ORDER_MUTATION);
@@ -62,7 +63,7 @@ const PosScreen = () => {
       return;
     }
     if (data && data.allProducts) {
-      console.log(data.allProducts)
+      console.log(data.allProducts);
       const productsData = data.allProducts.data.map(product => ({
         label: product.name,
         value: product.id,
@@ -104,6 +105,8 @@ const PosScreen = () => {
     if (product) {
       setSelectedProduct(product);
       addProductToCart(product);
+      // Reset selected value to show placeholder text
+      setOpen(false); // Close the dropdown after selection
     }
   };
 
@@ -113,6 +116,7 @@ const PosScreen = () => {
       Alert.alert('Product already in cart', 'You can update the quantity in the cart.');
     } else {
       setCart([...cart, { ...product, quantity: 1, subtotal: parseFloat_nancl(product.priceHtml.finalPrice) }]);
+      setSelectedProduct(null); // Reset selected product
     }
   };
 
@@ -140,7 +144,6 @@ const PosScreen = () => {
     return cart.reduce((total, item) => total + item.subtotal, 0).toFixed(2);
   };
 
-  // Calculate change and disable button based on amount tendered
   useEffect(() => {
     const grandTotal = parseFloat(calculateGrandTotal());
     const tendered = parseFloat(amountTendered);
@@ -155,6 +158,9 @@ const PosScreen = () => {
   }, [amountTendered, cart]);
 
   const placePosOrderHandler = async () => {
+    if (isSubmitting) return; // Prevent double submission
+    setIsSubmitting(true); // Set submitting state to true
+
     const orderInput = {
       amountTendered: parseFloat(amountTendered),
       grandTotal: parseFloat(calculateGrandTotal()),
@@ -166,22 +172,24 @@ const PosScreen = () => {
       })),
     };
 
-
     if (isOnline) {
       try {
         const { data } = await placePosOrder({ variables: { input: orderInput } });
-        Alert.alert('Order Placed v', `Order ID: ${data.placePosOrder.order.id}`);
+        Alert.alert('Order Placed', `Order ID: ${data.placePosOrder.order.id}`);
         setCart([]);
         setAmountTendered(''); // Clear the amount tendered field
       } catch (error) {
         console.error('Error placing order:', error);
         Alert.alert('Error', `Failed to place order: ${error.message}`);
+      } finally {
+        setIsSubmitting(false); // Reset submitting state
       }
     } else {
       saveOrderToStorage(orderInput);
       Alert.alert('Order Saved', 'Your order will be placed once you are back online');
       setCart([]);
       setAmountTendered(''); // Clear the amount tendered field
+      setIsSubmitting(false); // Reset submitting state
     }
   };
 
@@ -212,7 +220,6 @@ const PosScreen = () => {
           }
         }
 
-        // Remove only successfully synced orders from local storage
         const remainingOrders = offlineOrders.filter(order => !successfulOrders.includes(order));
         await AsyncStorage.setItem('offlineOrders', JSON.stringify(remainingOrders));
       }
@@ -222,10 +229,9 @@ const PosScreen = () => {
   };
 
   const refreshProducts = async () => {
-    // Force re-fetch products and overwrite local storage
     try {
-      await refetch(); // This refetches the products from the server
-      await fetchProducts(); // Update local state and save to storage
+      await refetch();
+      await fetchProducts();
       Alert.alert('Success', 'Products refreshed from server');
     } catch (error) {
       Alert.alert('Error', 'Failed to refresh products');
@@ -240,7 +246,7 @@ const PosScreen = () => {
       <View style={styles.dropdown_style}>
         <DropDownPicker
           open={open}
-          value={selectedProduct?.value}
+          value={selectedProduct?.value || null} // Show null to display placeholder when no product is selected
           items={items}
           setOpen={setOpen}
           setValue={(callback) => {
@@ -264,7 +270,7 @@ const PosScreen = () => {
           data={cart}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View style={[styles.cartItem, (item.quantity === 0 || item.subtotal == 0) && styles.cartItemDanger]}>
+            <View style={[styles.cartItem, (item.quantity === 0 || item.subtotal === 0) && styles.cartItemDanger]}>
               <Text style={styles.itemText}>{item.label}</Text>
 
               <View style={styles.quantityContainer}>
@@ -291,10 +297,9 @@ const PosScreen = () => {
             </View>
           )}
         />
-      <View style={styles.blank_forscrolling} />
+        <View style={styles.blank_forscrolling} />
       </View>
 
-      {/* Grand Total, Amount Tendered, and Change Section */}
       <View style={styles.totals_page}>
         <Text style={styles.grandTotalText}>Grand Total: {calculateGrandTotal()}</Text>
         <TextInput
@@ -321,7 +326,7 @@ const PosScreen = () => {
           <Icon name="bars" size={30} color="#000" />
         </TouchableOpacity>
         <DropdownMenu isVisible={isDropdownVisible} onClose={() => setDropdownVisible(false)} />
-      </View> 
+      </View>
     </View>
   );
 };
@@ -345,13 +350,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'center',
-    fontSize: width * 0.018, // Responsive font size
+    fontSize: width * 0.018,
   },
   headerTextRight: {
     fontWeight: 'bold',
     flex: 1,
     textAlign: 'right',
-    fontSize: width * 0.018, // Responsive font size
+    fontSize: width * 0.018,
   },
   cartItem: {
     flexDirection: 'row',
@@ -367,19 +372,19 @@ const styles = StyleSheet.create({
     width: width * 0.7,
     flex: 1,
     textAlign: 'left',
-    fontSize: width * 0.018, // Responsive font size
+    fontSize: width * 0.018,
   },
   itemTextsubtotal: {
     flex: 1,
     textAlign: 'center',
-    fontSize: width * 0.018, // Responsive font size
+    fontSize: width * 0.018,
   },
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   quantityButton: {
-    fontSize: width * 0.025, // Responsive button size
+    fontSize: width * 0.025,
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
@@ -387,17 +392,17 @@ const styles = StyleSheet.create({
     height: height * 0.05,
   },
   quantityInput: {
-    width: width * 0.05, // Responsive input width
+    width: width * 0.05,
     textAlign: 'center',
     borderWidth: 1,
     borderColor: '#d0d0d0',
-    fontSize: width * 0.019, // Responsive font size
+    fontSize: width * 0.019,
   },
   grandTotalText: {
     fontWeight: 'bold',
     textAlign: 'right',
     padding: 16,
-    fontSize: width * 0.019, // Responsive font size
+    fontSize: width * 0.019,
   },
   amountTenderedInput: {
     borderWidth: 1,
@@ -417,20 +422,20 @@ const styles = StyleSheet.create({
   },
   removeItem: {
     color: 'red',
-    fontSize: width * 0.02, // Responsive icon size
+    fontSize: width * 0.02,
   },
   toggleButton: {
     position: 'absolute',
-    bottom: 0, // Responsive bottom margin
+    bottom: 0,
   },
   placeOrderButton: {
-    marginBottom: height * 0.1,  // Push the button up slightly based on screen height
+    marginBottom: height * 0.1,
   },
   totals_page: {
     position: 'absolute',
-    bottom: height * 0.005, // Responsive bottom position
+    bottom: height * 0.005,
     textAlign: 'right',
-    height: height * 0.25, // Increased height for additional fields
+    height: height * 0.25,
     right: width * 0.01,
     backgroundColor: 'white',
   },
@@ -440,7 +445,7 @@ const styles = StyleSheet.create({
   active_page: {
     position: 'relative',
     overflow: 'scroll',
-    height: height * 0.65, // Responsive height
+    height: height * 0.65,
   },
   menu_page: {
     position: 'absolute',
@@ -451,7 +456,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 16,
     right: 16,
-    zIndex: 10, // To ensure it stays on top
+    zIndex: 10,
   },
 });
 
