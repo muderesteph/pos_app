@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Dimensions, FlatList, Alert,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';  // Updated to version 2.5.5
 import { useMutation, useQuery } from '@apollo/client';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';  // Updated to version 6.5.0
 import { STOCK_TAKE_MUTATION, STOCK_TAKES_QUERY, PRODUCTS_QUERY,deleteStockTakeItemMutation } from '../graphql/mutations/stockTaking';
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 

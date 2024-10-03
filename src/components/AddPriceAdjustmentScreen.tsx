@@ -20,7 +20,7 @@ const AddPriceAdjustmentScreen = ({ navigation }) => {
   const { data, loading, error } = useQuery(PRODUCTS_QUERY);
   const [createPriceAdjustment] = useMutation(createPriceAdjustmentMutation);
 
-  const filteredProducts = data?.allProducts?.data.filter(product =>
+  const filteredProducts = data?.posProducts.filter(product =>
     product.name.toLowerCase().includes(query.toLowerCase())
   );
 

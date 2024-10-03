@@ -1,29 +1,18 @@
 import { gql } from '@apollo/client';
 
 export const PRODUCTS_QUERY = gql`
-  query AllProducts {
-    allProducts {
-      data {
-        id
-        sku
-        name
-        description
-        shortDescription
-        createdAt
-        updatedAt
-        inventories {
-          qty
-          productId
-          id
-        }
-        priceHtml {
-          finalPrice
-          currencyCode
-        }
+  query PosProducts {
+    posProducts {
+      id
+      sku
+      name
+      priceHtml {
+        finalPrice
       }
     }
   }
 `;
+
 
 export const PLACE_POS_ORDER_MUTATION = gql`
   mutation PlacePosOrder($input: PosOrderInputType!) {

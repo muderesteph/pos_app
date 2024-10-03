@@ -5,7 +5,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
 import { PRODUCTS_QUERY, PLACE_POS_ORDER_MUTATION } from '../graphql/mutations/posscreen';
 
 const { width, height } = Dimensions.get('window');
@@ -44,8 +44,8 @@ const PosScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (data && data.allProducts) {
-      const productsData = data.allProducts.data.map(product => ({
+    if (data && data.posProducts) {
+      const productsData = data.posProducts.map(product => ({
         label: product.name,
         value: product.id,
         ...product,
@@ -59,12 +59,19 @@ const PosScreen = () => {
   const fetchProducts = async () => {
     if (loading) return;
     if (error) {
-      Alert.alert('Error', 'Failed to fetch products');
+      console.error('GraphQL Error:', error);
+      Alert.alert('Error', 'Failed to fetch products1');
       return;
     }
+<<<<<<< HEAD
     if (data && data.allProducts) {
       console.log(data.allProducts);
       const productsData = data.allProducts.data.map(product => ({
+=======
+    if (data && data.posProducts) {
+      //console.log(data.posProducts)
+      const productsData = data.posProducts.map(product => ({
+>>>>>>> beee20c706ba4013d7969670d8b875bd04428172
         label: product.name,
         value: product.id,
         ...product,

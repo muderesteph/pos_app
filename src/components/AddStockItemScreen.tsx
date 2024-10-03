@@ -11,14 +11,14 @@ import {
   FlatList,
   TouchableWithoutFeedback
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';  // Updated to version 6.5.0
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery } from '@apollo/client';
 import { useNavigation } from '@react-navigation/native';
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
 import Autocomplete from 'react-native-autocomplete-input';
-import moment from 'moment';  // Import moment for date formatting
+import moment from 'moment'; // Import moment for date formatting
 
 import { addStockMutation, PRODUCTS_QUERY } from '../graphql/mutations/addStockItem';
 
@@ -36,6 +36,7 @@ const AddStockItemScreen = () => {
   const [createdAt, setCreatedAt] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [query, setQuery] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false); // State to track submission status
 
   const navigation = useNavigation();
   const [addStockItem] = useMutation(addStockMutation);
@@ -43,6 +44,8 @@ const AddStockItemScreen = () => {
   const { data, loading, error, refetch } = useQuery(PRODUCTS_QUERY);
 
   const handleAddStockItem = async () => {
+    if (isSubmitting) return; // Prevent multiple submissions if already submitting
+
     if ((!selectedProduct && !productName) || !sellingPrice || !qty || !costPrice || !transportCost) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
@@ -58,15 +61,23 @@ const AddStockItemScreen = () => {
       created_at: createdAt.toISOString(),
     };
 
-    if (isOnline) {
-      await addStockItem({ variables: { input: stock } });
-    } else {
-      const offlineStocks = JSON.parse(await AsyncStorage.getItem('offlineStocks')) || [];
-      offlineStocks.push(stock);
-      await AsyncStorage.setItem('offlineStocks', JSON.stringify(offlineStocks));
-    }
+    setIsSubmitting(true); // Disable submission until done
 
-    navigation.navigate('StockItems'); // Redirect back to StockItemsScreen after adding the item
+    try {
+      if (isOnline) {
+        await addStockItem({ variables: { input: stock } });
+      } else {
+        const offlineStocks = JSON.parse(await AsyncStorage.getItem('offlineStocks')) || [];
+        offlineStocks.push(stock);
+        await AsyncStorage.setItem('offlineStocks', JSON.stringify(offlineStocks));
+      }
+
+      navigation.navigate('StockItems'); // Redirect back to StockItemsScreen after adding the item
+    } catch (error) {
+      Alert.alert('Error', 'Failed to add stock item.');
+    } finally {
+      setIsSubmitting(false); // Re-enable submission
+    }
   };
 
   const openDatePicker = () => setShowDatePicker(true);
@@ -78,7 +89,7 @@ const AddStockItemScreen = () => {
     }
   };
 
-  const filteredProducts = data?.allProducts?.data.filter(product =>
+  const filteredProducts = data?.posProducts?.filter(product =>
     product.name.toLowerCase().includes(query.toLowerCase())
   );
 
@@ -181,7 +192,11 @@ const AddStockItemScreen = () => {
         )}
       </View>
       <View style={styles.totals_page}>
-        <Button title="Add Stock" onPress={handleAddStockItem} />
+        <Button
+          title={isSubmitting ? "Submitting..." : "Add Stock"}
+          onPress={handleAddStockItem}
+          disabled={isSubmitting} // Disable button while submitting
+        />
         <View style={styles.buttonSpacing} />
         <Button title="Cancel" onPress={() => navigation.goBack()} />
       </View>
@@ -258,3 +273,4 @@ const styles = StyleSheet.create({
 });
 
 export default AddStockItemScreen;
+

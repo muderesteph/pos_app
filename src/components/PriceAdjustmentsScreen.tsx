@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { useQuery } from '@apollo/client';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
 import DropdownMenu from '../navigation/DropdownMenu';
 import { listPriceAdjustmentsQuery } from '../graphql/mutations/createPriceAdjustment';
 import { useNavigation } from '@react-navigation/native';
