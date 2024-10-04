@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider,ApolloLink,HttpLink} from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import TestScreen from './components/TestScreen';
@@ -26,15 +27,16 @@ import { RootStackParamList } from './navigation/RootStackParamList';
 
 const httpLink = new HttpLink({ uri: 'https://pos.college.co.zw/graphql' });
 
-const errorLink = ApolloLink.from([
-  new ApolloLink((operation, forward) => {
-    return forward(operation).map((response) => {
-      console.log('GraphQL Request:', operation);
-      console.log('GraphQL Response:', response);
-      return response;
-    });
-  }),
-]);
+const errorLink = onError(({ networkError, graphQLErrors }) => {
+  if (graphQLErrors) {
+    graphQLErrors.map(({ message, locations, path }) =>
+      console.log(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+      )
+    );
+  }
+  if (networkError) console.log(`[Network error]: ${networkError}`);
+});
 
 const client = new ApolloClient({
   link: ApolloLink.from([errorLink, httpLink]),
@@ -53,7 +55,7 @@ const App = () => {
     <ApolloProvider client={client}>
       <NavigationContainer>
         <Stack.Navigator>
-          {/* <Stack.Screen name="Test" component={TestScreen} /> */}
+          <Stack.Screen name="Test" component={TestScreen} /> 
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="POSMAIN" component={PosScreen} />
           <Stack.Screen name="AdminAuth" component={AdminAuthScreen} />

@@ -16,7 +16,9 @@ type LoginScreenProps = {
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [pin, setPin] = useState('');
   const [isOnline, setIsOnline] = useState(true);
-  const [login, { loading }] = useMutation(LOGIN_MUTATION);
+  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
+    fetchPolicy: 'no-cache',
+  });
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -32,7 +34,9 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const handleLogin = async () => {
     if (isOnline) {
       try {
-        const { data } = await login({ variables: { pin } });
+        //const { data } = await login({ variables: { pin } });
+        const { data } = await login({ variables: { pin: "9819" } });
+
         if (data.posUserLogin.status) {
           await AsyncStorage.setItem('token', data.posUserLogin.accessToken);
           await AsyncStorage.setItem('pin', pin);
