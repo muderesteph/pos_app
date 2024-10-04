@@ -13,18 +13,13 @@ export const adminLoginMutation = gql`
 `;
 
 export const LOGIN_MUTATION = gql`
-  mutation UserLogin($pin: String!) {
-    posUserLogin(input: { pin: $pin }) {
-      status
-      success
-      accessToken
-      tokenType
-      expiresIn
-      user {
-        id
-        name
-        email
-      }
-    }
+mutation PosUserLogin($pin: String!) {
+  posUserLogin(input: { pin: $pin }) {
+    status
+    success
+    accessToken
+    tokenType
+    expiresIn
   }
+}
 `;

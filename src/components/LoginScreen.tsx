@@ -27,6 +27,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       unsubscribe();
     };
   }, []);
+  
 
   const handleLogin = async () => {
     if (isOnline) {
@@ -40,9 +41,20 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           Alert.alert('Login Failed', 'Invalid credentials');
         }
       } catch (error) {
-        console.error('Login error:', error);
+        console.error('Login error:', JSON.stringify(error, null, 2));
+        if (error.networkError) {
+          console.log('Network Error Details:', error.networkError);
+        }
+        if (error.graphQLErrors) {
+          error.graphQLErrors.forEach(({ message, locations, path }) =>
+            console.log(
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            )
+          );
+        }
         Alert.alert('Error', 'An error occurred during login');
       }
+      
     } else {
       const storedPin = await AsyncStorage.getItem('pin');
       if (storedPin === pin) {

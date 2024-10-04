@@ -63,15 +63,10 @@ const PosScreen = () => {
       Alert.alert('Error', 'Failed to fetch products1');
       return;
     }
-<<<<<<< HEAD
-    if (data && data.allProducts) {
-      console.log(data.allProducts);
-      const productsData = data.allProducts.data.map(product => ({
-=======
+
     if (data && data.posProducts) {
       //console.log(data.posProducts)
       const productsData = data.posProducts.map(product => ({
->>>>>>> beee20c706ba4013d7969670d8b875bd04428172
         label: product.name,
         value: product.id,
         ...product,

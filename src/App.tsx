@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider,ApolloLink,HttpLink} from '@apollo/client';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import TestScreen from './components/TestScreen';
 import LoginScreen from './components/LoginScreen';
 import AdminAuthScreen from './components/AdminAuthScreen';
 import CashCollectionsScreen from './components/CashCollectionsScreen';
@@ -17,8 +18,26 @@ import { RootStackParamList } from './navigation/RootStackParamList';
 // Import the background sync utility
 //import { configureBackgroundSync } from './utils/backgroundSync';
 
+// const client = new ApolloClient({
+//   uri: 'https://pos.college.co.zw/graphql',
+//   cache: new InMemoryCache(),
+// });
+
+
+const httpLink = new HttpLink({ uri: 'https://pos.college.co.zw/graphql' });
+
+const errorLink = ApolloLink.from([
+  new ApolloLink((operation, forward) => {
+    return forward(operation).map((response) => {
+      console.log('GraphQL Request:', operation);
+      console.log('GraphQL Response:', response);
+      return response;
+    });
+  }),
+]);
+
 const client = new ApolloClient({
-  uri: 'https://pos.college.co.zw/graphql',
+  link: ApolloLink.from([errorLink, httpLink]),
   cache: new InMemoryCache(),
 });
 
@@ -34,6 +53,7 @@ const App = () => {
     <ApolloProvider client={client}>
       <NavigationContainer>
         <Stack.Navigator>
+          {/* <Stack.Screen name="Test" component={TestScreen} /> */}
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="POSMAIN" component={PosScreen} />
           <Stack.Screen name="AdminAuth" component={AdminAuthScreen} />
