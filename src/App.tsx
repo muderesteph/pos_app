@@ -35,7 +35,7 @@ const errorLink = onError(({ networkError, graphQLErrors }) => {
       )
     );
   }
-  if (networkError) console.log(`[Network error]: ${networkError}`);
+  if (networkError) console.log(`[Network error2]: ${networkError}`);
 });
 
 const client = new ApolloClient({
@@ -55,7 +55,7 @@ const App = () => {
     <ApolloProvider client={client}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Test" component={TestScreen} /> 
+          {/* <Stack.Screen name="Test" component={TestScreen} />  */}
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="POSMAIN" component={PosScreen} />
           <Stack.Screen name="AdminAuth" component={AdminAuthScreen} />

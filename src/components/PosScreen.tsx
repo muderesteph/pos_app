@@ -5,7 +5,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { PRODUCTS_QUERY, PLACE_POS_ORDER_MUTATION } from '../graphql/mutations/posscreen';
 
 const { width, height } = Dimensions.get('window');
