@@ -8,10 +8,12 @@ export type RootStackParamList = {
   AdminAuth: undefined;
   CashCollections: undefined;
   StockItems: undefined;
+  MissingStockItems: undefined;
   PriceAdjustments: undefined;
   CollectCash: undefined;
   StockTake: undefined;
   AddStockItem: undefined;
+  AddMissingStockItem: undefined;
   AddPriceAdjustment:undefined;
   About:undefined;
 };
@@ -21,6 +23,7 @@ export type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 
 export type AdminAuthScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AdminAuth'>;
 export type CashCollectionsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CashCollections'>;
 export type StockItemsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'StockItems'>;
+export type MissingStockItemsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'MissingStockItems'>;
 export type PriceAdjustmentsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'PriceAdjustments'>;
 export type PosScreenNavigationProp = StackNavigationProp<RootStackParamList, 'POSTAB'>;
 export type CollectCashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CollectCash'>;
@@ -32,7 +35,8 @@ export type AboutScreenNavigationProp = StackNavigationProp<RootStackParamList, 
 export type LoginScreenRouteProp = RouteProp<RootStackParamList, 'Login'>;
 export type AdminAuthScreenRouteProp = RouteProp<RootStackParamList, 'AdminAuth'>;
 export type CashCollectionsScreenRouteProp = RouteProp<RootStackParamList, 'CashCollections'>;
-export type StockItemsScreenRouteProp = RouteProp<RootStackParamList, 'StockItems'>;
+export type StockItemsScreenRouteProp = RouteProp<RootStackParamList, 'StockItems'>; 
+export type MissingStockItemsScreenRouteProp = RouteProp<RootStackParamList, 'MissingStockItems'>;
 export type PriceAdjustmentsScreenRouteProp = RouteProp<RootStackParamList, 'PriceAdjustments'>;
 export type PosScreenScreenRouteProp = RouteProp<RootStackParamList, 'POSMAIN'>;
 export type CollectCashScreenRouteProp = RouteProp<RootStackParamList, 'CollectCash'>;

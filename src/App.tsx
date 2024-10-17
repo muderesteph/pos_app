@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider,ApolloLink,HttpLink} from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
+import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import TestScreen from './components/TestScreen';
@@ -11,7 +12,9 @@ import PriceAdjustmentsScreen from './components/PriceAdjustmentsScreen';
 import PosScreen from './components/PosScreen';
 import StockTakeScreen from './components/StockTakeScreen';
 import StockItemsScreen from './components/StockItemsScreen';
+import MissingStockItemsScreen from './components/MissingStockItemsScreen';
 import AddStockItemScreen from './components/AddStockItemScreen';
+import AddMissingStockItemScreen from './components/AddMissingStockItemScreen';
 import AddPriceAdjustmentScreen from './components/AddPriceAdjustmentScreen';
 import AboutScreen from './components/AboutScreen'
 import { RootStackParamList } from './navigation/RootStackParamList';
@@ -24,6 +27,12 @@ import { RootStackParamList } from './navigation/RootStackParamList';
 //   cache: new InMemoryCache(),
 // });
 
+
+//if (__DEV__) {
+  // Adds messages only in a dev environment
+  loadDevMessages();
+  loadErrorMessages();
+// /}
 
 const httpLink = new HttpLink({ uri: 'https://nyimoshop.college.co.zw/graphql' });
 
@@ -62,8 +71,10 @@ const App = () => {
           <Stack.Screen name="CashCollections" component={CashCollectionsScreen} />
           <Stack.Screen name="PriceAdjustments" component={PriceAdjustmentsScreen} />
           <Stack.Screen name="StockItems" component={StockItemsScreen} />
+          <Stack.Screen name="MissingStockItems" component={MissingStockItemsScreen} />
           <Stack.Screen name="StockTake" component={StockTakeScreen} />
           <Stack.Screen name="AddStockItem" component={AddStockItemScreen} />
+          <Stack.Screen name="AddMissingStockItem" component={AddMissingStockItemScreen} />
           <Stack.Screen name="AddPriceAdjustment" component={AddPriceAdjustmentScreen} />
           <Stack.Screen name="About" component={AboutScreen} />
         </Stack.Navigator>

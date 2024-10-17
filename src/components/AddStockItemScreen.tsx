@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery } from '@apollo/client';
 import { useNavigation } from '@react-navigation/native';
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
+import Icon from 'react-native-vector-icons/FontAwesome';  // Updated to version 10.1.0
 import Autocomplete from 'react-native-autocomplete-input';
 import moment from 'moment'; // Import moment for date formatting
 
