@@ -25,7 +25,7 @@ import { RootStackParamList } from './navigation/RootStackParamList';
 // });
 
 
-const httpLink = new HttpLink({ uri: 'https://pos.college.co.zw/graphql' });
+const httpLink = new HttpLink({ uri: 'https://nyimoshop.college.co.zw/graphql' });
 
 const errorLink = onError(({ networkError, graphQLErrors }) => {
   if (graphQLErrors) {

@@ -1,4 +1,4 @@
-#Fri Oct 04 19:51:11 CAT 2024
+#Tue Oct 08 08:34:05 CAT 2024
 base.2=/home/stephenmudere/Documents/personal/pos_app/android/app/build/intermediates/dex/release/mergeDexRelease/classes2.dex
 path.2=classes2.dex
 base.1=/home/stephenmudere/Documents/personal/pos_app/android/app/build/intermediates/global_synthetics_dex/release/mergeReleaseGlobalSynthetics/classes.dex
