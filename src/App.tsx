@@ -16,6 +16,8 @@ import MissingStockItemsScreen from './components/MissingStockItemsScreen';
 import AddStockItemScreen from './components/AddStockItemScreen';
 import AddMissingStockItemScreen from './components/AddMissingStockItemScreen';
 import AddPriceAdjustmentScreen from './components/AddPriceAdjustmentScreen';
+import AddInternalConsumptionScreen from './components/AddInternalConsumptionScreen';
+import InternalConsumptionScreen from './components/InternalConsumptionScreen';
 import AboutScreen from './components/AboutScreen'
 import { RootStackParamList } from './navigation/RootStackParamList';
 
@@ -76,6 +78,8 @@ const App = () => {
           <Stack.Screen name="AddStockItem" component={AddStockItemScreen} />
           <Stack.Screen name="AddMissingStockItem" component={AddMissingStockItemScreen} />
           <Stack.Screen name="AddPriceAdjustment" component={AddPriceAdjustmentScreen} />
+          <Stack.Screen name="AddInternalConsumption" component={AddInternalConsumptionScreen} />
+          <Stack.Screen name="InternalConsumption" component={InternalConsumptionScreen} />
           <Stack.Screen name="About" component={AboutScreen} />
         </Stack.Navigator>
       </NavigationContainer>
