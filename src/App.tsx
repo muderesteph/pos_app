@@ -19,6 +19,7 @@ import AddPriceAdjustmentScreen from './components/AddPriceAdjustmentScreen';
 import AddInternalConsumptionScreen from './components/AddInternalConsumptionScreen';
 import InternalConsumptionScreen from './components/InternalConsumptionScreen';
 import AboutScreen from './components/AboutScreen'
+import OrderedProductsScreen from './components/OrderedProductsScreen'
 import { RootStackParamList } from './navigation/RootStackParamList';
 
 // Import the background sync utility
@@ -80,6 +81,7 @@ const App = () => {
           <Stack.Screen name="AddPriceAdjustment" component={AddPriceAdjustmentScreen} />
           <Stack.Screen name="AddInternalConsumption" component={AddInternalConsumptionScreen} />
           <Stack.Screen name="InternalConsumption" component={InternalConsumptionScreen} />
+          <Stack.Screen name="OrderedProducts" component={OrderedProductsScreen} />
           <Stack.Screen name="About" component={AboutScreen} />
         </Stack.Navigator>
       </NavigationContainer>

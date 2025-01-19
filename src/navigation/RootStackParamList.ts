@@ -17,6 +17,7 @@ export type RootStackParamList = {
   AddPriceAdjustment:undefined;
   InternalConsumption:undefined;
   AddInternalConsumption:undefined;
+  OrderedProducts:undefined;
   About:undefined;
 };
 
@@ -31,6 +32,7 @@ export type PosScreenNavigationProp = StackNavigationProp<RootStackParamList, 'P
 export type CollectCashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CollectCash'>;
 export type StockTakeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'StockTake'>;
 export type InternalConsumptionNavigationProp = StackNavigationProp<RootStackParamList, 'InternalConsumption'>;
+export type IOrderedProductsNavigationProp = StackNavigationProp<RootStackParamList, 'OrderedProducts'>;
 export type AboutScreenNavigationProp = StackNavigationProp<RootStackParamList, 'About'>;
 
 
@@ -45,5 +47,6 @@ export type PosScreenScreenRouteProp = RouteProp<RootStackParamList, 'POSMAIN'>;
 export type CollectCashScreenRouteProp = RouteProp<RootStackParamList, 'CollectCash'>;
 export type StockTakeScreenRouteProp = RouteProp<RootStackParamList, 'StockTake'>;
 export type InternalConsumptionScreenRouteProp = RouteProp<RootStackParamList, 'InternalConsumption'>;
+export type OrderedProductsRouteProp = RouteProp<RootStackParamList, 'OrderedProducts'>;
 export type AboutScreenRouteProp = RouteProp<RootStackParamList, 'About'>;
 

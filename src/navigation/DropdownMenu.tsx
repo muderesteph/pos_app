@@ -21,6 +21,10 @@ const DropdownMenu = ({ isVisible, onClose }) => {
             <Icon name="shopping-cart" size={20} color="#000" />
             <Text style={styles.menuText}>POS</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('OrderedProducts')}>
+            <Icon name="shopping-cart" size={20} color="#000" />
+            <Text style={styles.menuText}>Sold Items</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={() => navigateWithAdminAuth('CashCollections')}>
             <Icon name="credit-card" size={20} color="#000" />
             <Text style={styles.menuText}>Cash Collections</Text>
