@@ -35,7 +35,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     if (isOnline) {
       try {
         //const { data } = await login({ variables: { pin } });
-        const { data } = await login({ variables: { pin: "9819" } });
+        const { data } = await login({ variables: { pin: pin } });
 
         if (data.posUserLogin.status) {
           await AsyncStorage.setItem('token', data.posUserLogin.accessToken);

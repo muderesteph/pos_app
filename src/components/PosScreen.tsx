@@ -7,6 +7,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { PRODUCTS_QUERY, PLACE_POS_ORDER_MUTATION } from '../graphql/mutations/posscreen';
+import { syncOfflineOrders } from '../utils/syncUtils'; 
 
 const { width, height } = Dimensions.get('window');
 
@@ -25,14 +26,14 @@ const PosScreen = () => {
   const { data, loading, error, refetch } = useQuery(PRODUCTS_QUERY, {
     skip: !isOnline,
   });
-  const [placePosOrder] = useMutation(PLACE_POS_ORDER_MUTATION);
+  
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(async (state) => {
       setIsOnline(state.isConnected ?? false);
       if (state.isConnected) {
         await fetchProducts();
-        await syncOfflineOrders();
+        //await syncOfflineOrders();
       } else {
         await loadProductsFromStorage();
       }
@@ -55,6 +56,18 @@ const PosScreen = () => {
       saveProductsToStorage(productsData);
     }
   }, [data]);
+
+  useEffect(() => {
+    const syncInterval = setInterval(async () => {
+      const state = await NetInfo.fetch();
+      if (state.isConnected) {
+        await syncOfflineOrders();
+      }
+    }, 60000); // Sync every 60 seconds
+  
+    return () => clearInterval(syncInterval);
+  }, []);
+  
 
   const fetchProducts = async () => {
     if (loading) return;
@@ -174,25 +187,11 @@ const PosScreen = () => {
       })),
     };
 
-    if (isOnline) {
-      try {
-        const { data } = await placePosOrder({ variables: { input: orderInput } });
-        Alert.alert('Order Placed', `Order ID: ${data.placePosOrder.order.id}`);
-        setCart([]);
-        setAmountTendered(''); // Clear the amount tendered field
-      } catch (error) {
-        console.error('Error placing order:', error);
-        Alert.alert('Error', `Failed to place order: ${error.message}`);
-      } finally {
-        setIsSubmitting(false); // Reset submitting state
-      }
-    } else {
-      saveOrderToStorage(orderInput);
-      Alert.alert('Order Saved', 'Your order will be placed once you are back online');
-      setCart([]);
-      setAmountTendered(''); // Clear the amount tendered field
-      setIsSubmitting(false); // Reset submitting state
-    }
+    saveOrderToStorage(orderInput);
+    Alert.alert('Order Saved', 'Click Ok to capture the next order');
+    setCart([]);
+    setAmountTendered(''); // Clear the amount tendered field
+    setIsSubmitting(false); // Reset submitting state
   };
 
   const saveOrderToStorage = async (order) => {
@@ -206,29 +205,8 @@ const PosScreen = () => {
     }
   };
 
-  const syncOfflineOrders = async () => {
-    try {
-      const storedOrders = await AsyncStorage.getItem('offlineOrders');
-      if (storedOrders) {
-        const offlineOrders = JSON.parse(storedOrders);
-        const successfulOrders = [];
-
-        for (const order of offlineOrders) {
-          try {
-            await placePosOrder({ variables: { input: order } });
-            successfulOrders.push(order);
-          } catch (error) {
-            console.error('Error syncing offline orders:', error);
-          }
-        }
-
-        const remainingOrders = offlineOrders.filter(order => !successfulOrders.includes(order));
-        await AsyncStorage.setItem('offlineOrders', JSON.stringify(remainingOrders));
-      }
-    } catch (error) {
-      console.error('Error syncing offline orders', error);
-    }
-  };
+ 
+  
 
   const refreshProducts = async () => {
     try {

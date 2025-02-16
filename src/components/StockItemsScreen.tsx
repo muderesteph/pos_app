@@ -22,7 +22,7 @@ const StockItemsScreen = () => {
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsOnline(state.isConnected ?? false);
       if (state.isConnected) {
-        syncOfflineData();
+        //syncOfflineData();
       }
     });
 

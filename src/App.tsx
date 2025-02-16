@@ -21,6 +21,11 @@ import InternalConsumptionScreen from './components/InternalConsumptionScreen';
 import AboutScreen from './components/AboutScreen'
 import OrderedProductsScreen from './components/OrderedProductsScreen'
 import { RootStackParamList } from './navigation/RootStackParamList';
+import { startBackgroundSync } from './utils/syncUtils'; // ✅ Ensure correct import
+import { startStockTakeBackgroundSync } from './utils/syncStockTakes'; // ✅ Import background sync
+import { startStockItemsBackgroundSync } from './utils/syncStockItems'; // ✅ Import Background Sync
+
+
 
 // Import the background sync utility
 //import { configureBackgroundSync } from './utils/backgroundSync';
@@ -61,6 +66,9 @@ const App = () => {
   useEffect(() => {
     // Initialize background syncing
     //configureBackgroundSync();
+    startBackgroundSync();
+    startStockTakeBackgroundSync(); 
+    startStockItemsBackgroundSync();
   }, []);
 
   return (

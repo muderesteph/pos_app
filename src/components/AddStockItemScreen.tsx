@@ -19,6 +19,8 @@ import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome';  // Updated to version 10.1.0
 import Autocomplete from 'react-native-autocomplete-input';
 import moment from 'moment'; // Import moment for date formatting
+import { startStockItemsBackgroundSync } from '../utils/syncStockItems'; // ✅ Import Background Sync
+
 
 import { addStockMutation, PRODUCTS_QUERY } from '../graphql/mutations/addStockItem';
 
@@ -63,21 +65,28 @@ const AddStockItemScreen = () => {
 
     setIsSubmitting(true); // Disable submission until done
 
-    try {
-      if (isOnline) {
-        await addStockItem({ variables: { input: stock } });
-      } else {
-        const offlineStocks = JSON.parse(await AsyncStorage.getItem('offlineStocks')) || [];
-        offlineStocks.push(stock);
-        await AsyncStorage.setItem('offlineStocks', JSON.stringify(offlineStocks));
-      }
+    const offlineStocks = JSON.parse(await AsyncStorage.getItem('offlineStockItems')) || [];
+    offlineStocks.push(stock);
+    await AsyncStorage.setItem('offlineStockItems', JSON.stringify(offlineStocks));
+    setIsSubmitting(false);
+    startStockItemsBackgroundSync();
+    navigation.navigate('StockItems'); 
 
-      navigation.navigate('StockItems'); // Redirect back to StockItemsScreen after adding the item
-    } catch (error) {
-      Alert.alert('Error', 'Failed to add stock item.');
-    } finally {
-      setIsSubmitting(false); // Re-enable submission
-    }
+    // try {
+    //   if (isOnline) {
+    //     await addStockItem({ variables: { input: stock } });
+    //   } else {
+    //     const offlineStocks = JSON.parse(await AsyncStorage.getItem('offlineStocks')) || [];
+    //     offlineStocks.push(stock);
+    //     await AsyncStorage.setItem('offlineStocks', JSON.stringify(offlineStocks));
+    //   }
+
+    //   navigation.navigate('StockItems'); // Redirect back to StockItemsScreen after adding the item
+    // } catch (error) {
+    //   Alert.alert('Error', 'Failed to add stock item.');
+    // } finally {
+    //   setIsSubmitting(false); // Re-enable submission
+    // }
   };
 
   const openDatePicker = () => setShowDatePicker(true);

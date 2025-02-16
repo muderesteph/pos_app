@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Dimensions, FlatList, Alert,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';  // Updated to version 2.5.5
-import { useMutation, useQuery } from '@apollo/client';
-import DateTimePicker from '@react-native-community/datetimepicker';  // Updated to version 6.5.0
-import { STOCK_TAKE_MUTATION, STOCK_TAKES_QUERY, PRODUCTS_QUERY,deleteStockTakeItemMutation } from '../graphql/mutations/stockTaking';
+import { Picker } from '@react-native-picker/picker';
+import { useQuery } from '@apollo/client';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { STOCK_TAKES_QUERY, PRODUCTS_QUERY, deleteStockTakeItemMutation } from '../graphql/mutations/stockTaking';
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetInfo from '@react-native-community/netinfo';
+import { startStockTakeBackgroundSync } from '../utils/syncStockTakes'; // ✅ Import Background Sync
 
 const { width, height } = Dimensions.get('window');
 
@@ -20,19 +20,15 @@ const StockTakingScreen = () => {
   const [localStockTakes, setLocalStockTakes] = useState([]);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // New state for button disabling
-  const [deleteStockTakeItem] = useMutation(deleteStockTakeItemMutation);
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
-
-  //const { data, loading, error } = useQuery(PRODUCTS_QUERY);
   const { data: productsData, refetch: refetchProducts } = useQuery(PRODUCTS_QUERY, {
     variables: { datetime: date.toISOString().split('T')[0] },
   });
-  const { data: stockTakesData, refetch:refetchStocks } = useQuery(STOCK_TAKES_QUERY, {
+  const { data: stockTakesData, refetch: refetchStocks } = useQuery(STOCK_TAKES_QUERY, {
     fetchPolicy: 'network-only',  
     variables: { datetime: date.toISOString().split('T')[0] },
   });
-  const [createStockTake] = useMutation(STOCK_TAKE_MUTATION);
 
   useEffect(() => {
     checkLocalStockTakes();
@@ -55,122 +51,36 @@ const StockTakingScreen = () => {
     setShowDatePicker(false);
     if (selectedDate) {
       setDate(selectedDate);
-      refetchStocks(); // Refetch the data when the date is changed
+      refetchStocks();
       refetchProducts();
     }
   };
 
-
-  const removeItem = async (id) => {
-    //const  = (id) => {
-      try {
-        const response = await deleteStockTakeItem({ variables: { id } });
-        if (response?.data) {
-          refetchStocks(); // Refetch the data when the date is changed
-          refetchProducts();
-        } else {
-          throw new Error('Failed to Delete stock take item');
-        }
-      } catch (error) {
-        console.error('Error during online deletion:', error);
-        Alert.alert('Error', 'Failed to Delete stock take item .');
-      }
-  };
-
-  const handleSubmit = async () => {
-    if (isSubmitting) return; // Prevent double clicks
-
-    setIsSubmitting(true); // Disable the button on the first click
-    //console.log(JSON.stringify(productsData.allStockTakeProducts))
-    const selectedProductData = productsData.allStockTakeProducts.find(product => product.id === selectedProduct);
-    const takenAt = date.toISOString().split('T')[0]; // Format date as yyyy-m-d
-
-    if (physicalCount === '') {
-      //console.log('empty returning');
-      setIsSubmitting(false); // Re-enable the button if validation fails
-      return false;
-    }
-
+  const handleSubmitOffline = async () => {
     const stockTake = {
       product_id: selectedProduct,
       physical_count: physicalCount,
-      taken_at: takenAt,
+      taken_at: date.toISOString().split('T')[0], 
     };
 
-    const handleSubmitOnline = async () => {
-      try {
-        const response = await createStockTake({
-          variables: { input: stockTake },
-        });
-    
-        if (response?.data) {
-          // Only refetch if the response is successful and contains data
-          refetchStocks(); // Refresh the stock list after successful submission
-          refetchProducts(); // Refresh the product list after successful submission
-          console.log('Success', 'Stock take submitted successfully.');
-        } else {
-          throw new Error('Failed to submit stock take');
-        }
-      } catch (error) {
-        console.error('Error during online submission:', error);
-        console.error('Error', 'Failed to submit stock take.');
-      }
-    };
-    
+    // ✅ Store locally
+    const updatedStockTakes = [...localStockTakes, stockTake];
+    await AsyncStorage.setItem('localStockTakes', JSON.stringify(updatedStockTakes));
+    setLocalStockTakes(updatedStockTakes);
+    Alert.alert('Offline', 'Stock take saved locally.');
 
-    const handleSubmitOffline = async () => {
-      const updatedStockTakes = [...localStockTakes, stockTake];
-      await AsyncStorage.setItem('localStockTakes', JSON.stringify(updatedStockTakes));
-      Alert.alert('Offline', 'Stock take saved locally.');
-    };
+    // ✅ Start background sync process
+    startStockTakeBackgroundSync();
 
-    NetInfo.fetch().then(state => {
-      if (state.isConnected) {
-        handleSubmitOnline()
-          .then(() => {
-            const currentIndex = productsData.allStockTakeProducts.findIndex(product => product.id === selectedProduct);
-            if (currentIndex < productsData.allStockTakeProducts.length - 1) {
-              setSelectedProduct(productsData.allStockTakeProducts[currentIndex + 1].id);
-            } else {
-              setSelectedProduct(productsData.allStockTakeProducts[0].id); // Reset to the first product if at the end
-            }
-            setPhysicalCount(''); // Clear input after submission
-            setIsSubmitting(false); // Re-enable the button after successful submission
-          })
-          .catch(e => {
-            console.error('Error during online submission:', e);
-            handleSubmitOffline().finally(() => {
-              setIsSubmitting(false); // Re-enable the button after offline submission
-            });
-          });
-      } else {
-        handleSubmitOffline().finally(() => {
-          setIsSubmitting(false); // Re-enable the button after offline submission
-        });
-      }
-    });
+    // Reset form
+    setPhysicalCount('');
+    const currentIndex = productsData.allStockTakeProducts.findIndex(product => product.id === selectedProduct);
+    setSelectedProduct(
+      currentIndex < productsData.allStockTakeProducts.length - 1
+        ? productsData.allStockTakeProducts[currentIndex + 1].id
+        : productsData.allStockTakeProducts[0].id
+    );
   };
-
-  useEffect(() => {
-    if (localStockTakes.length > 0) {
-      NetInfo.fetch().then(state => {
-        if (state.isConnected) {
-          localStockTakes.forEach(async (stockTake) => {
-            await createStockTake({
-              variables: { input: stockTake },
-            });
-          });
-          AsyncStorage.removeItem('localStockTakes'); // Clear local storage after successful submission
-          setLocalStockTakes([]); // Clear local state
-          refetchStocks(); // Refresh the list
-          refetchProducts();
-        }
-      });
-    }
-  }, [localStockTakes]);
-
-  //if (loading) return <Text>Loading...</Text>;
-  //if (error) return <Text>Error: {error.message}</Text>;
 
   const renderStockTakeItem = ({ item }) => (
     <View style={styles.stockTakeItem}>
@@ -178,9 +88,6 @@ const StockTakingScreen = () => {
       <Text style={styles.itemText}>{item.physical_count}</Text>
       <Text style={styles.itemText}>{item.system_count}</Text>
       <Text style={styles.itemText}>{item.reconciliation_difference}</Text>
-      <TouchableOpacity onPress={() => removeItem(item.id)}>
-        <Text style={styles.removeItem}><Icon name="trash" size={20} color="red" /></Text>
-      </TouchableOpacity>
     </View>
   );
 
@@ -188,8 +95,7 @@ const StockTakingScreen = () => {
     <View style={styles.container}>
       <View style={styles.active_page}>
 
-
-      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
+        <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
           <Text style={styles.datePickerText}>{date.toISOString().split('T')[0]}</Text>
         </TouchableOpacity>
         {showDatePicker && (
@@ -201,18 +107,12 @@ const StockTakingScreen = () => {
           />
         )}
 
-        
         <Text>Select Product</Text>
-        <Picker
-          selectedValue={selectedProduct}
-          onValueChange={(itemValue) => setSelectedProduct(itemValue)}
-        >
+        <Picker selectedValue={selectedProduct} onValueChange={setSelectedProduct}>
           {productsData && productsData.allStockTakeProducts.map(product => (
             <Picker.Item label={product.product_name} value={product.id} key={product.id} />
           ))}
         </Picker>
-
-       
 
         <TextInput
           placeholder="Physical Count"
@@ -223,9 +123,9 @@ const StockTakingScreen = () => {
         />
 
         <Button
-          title="Submit Stock Take record"
-          onPress={handleSubmit}
-          disabled={isSubmitting} // Disable the button if submission is in progress
+          title="Save Stock Take"
+          onPress={handleSubmitOffline}
+          disabled={isSubmitting}
         />
 
         <View style={styles.tableHeader}>
@@ -233,7 +133,6 @@ const StockTakingScreen = () => {
           <Text style={styles.headerText}>Physical count</Text>
           <Text style={styles.headerText}>System count</Text>
           <Text style={styles.headerText}>Diff</Text>
-          <Text style={styles.tableHeaderCenter}><Icon name="tasks" size={20} color="red" /></Text>
         </View>
         <FlatList
           data={stockTakesData?.stockTakes || []}
@@ -242,18 +141,9 @@ const StockTakingScreen = () => {
           renderItem={renderStockTakeItem}
         />
       </View>
-
-      <View style={styles.menu_page}>
-        <TouchableOpacity style={styles.toggleButton} onPress={() => setDropdownVisible(true)}>
-          <Icon name="bars" size={30} color="#000" />
-        </TouchableOpacity>
-        <DropdownMenu isVisible={isDropdownVisible} onClose={() => setDropdownVisible(false)} />
-      </View>
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   tableHeader: {

@@ -131,6 +131,30 @@
         }
       }
     },
+    "react-native-background-actions": {
+      "root": "/home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-background-actions",
+      "name": "react-native-background-actions",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-background-actions/react-native-background-actions.podspec",
+          "version": "4.0.1",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-background-actions/android",
+          "packageImportPath": "import com.asterinet.react.bgactions.BackgroundActionsPackage;",
+          "packageInstance": "new BackgroundActionsPackage()",
+          "buildTypes": [],
+          "componentDescriptors": [],
+          "cmakeListsPath": "/home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-background-actions/android/build/generated/source/codegen/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-gesture-handler": {
       "root": "/home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-gesture-handler",
       "name": "react-native-gesture-handler",

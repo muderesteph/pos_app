@@ -43,3 +43,4 @@ com.pos_app-debug-41 /home/stephenmudere/Documents/personal/pos_app/node_modules
 com.pos_app-debug-42 /home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-safe-area-context/android/build/intermediates/packaged_res/debug/packageDebugResources
 com.pos_app-debug-43 /home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-screens/android/build/intermediates/packaged_res/debug/packageDebugResources
 com.pos_app-debug-44 /home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-vector-icons/android/build/intermediates/packaged_res/debug/packageDebugResources
+com.pos_app-debug-45 /home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-version-check/android/build/intermediates/packaged_res/debug/packageDebugResources
