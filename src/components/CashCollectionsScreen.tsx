@@ -7,6 +7,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';  // Updated
 import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
 import { listCashCollectionsQuery, addCashCollectionMutation, deleteCashCollectionMutation } from '../graphql/mutations/addCashCollection';
+import { startCashCollectionsBackgroundSync } from '../utils/syncCashCollections'; // ✅ Import Background Sync
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -58,31 +60,29 @@ const CashCollectionsScreen = () => {
   const handleAddCollection = async () => {
     if (amount.trim() === '') {
       Alert.alert('Validation Error', 'Please enter a valid amount.');
-      return;
+        return;
     }
 
     const collection = {
-      id: Date.now(), // Unique ID for offline storage
-      amount: parseFloat(amount).toFixed(2), // Ensure 2 decimal places
-      collected_at: createdAt.toISOString().split('T')[0], // Format date as yyyy-m-d
+        //id: Date.now(), // Unique ID for offline storage
+        amount: parseFloat(amount).toFixed(2), // Ensure 2 decimal places
+        collected_at: createdAt.toISOString().split('T')[0], // Format date as yyyy-m-d
     };
 
-    if (isOnline) {
-      try {
-        await addCashCollection({ variables: collection });
-        refetch();
-        Alert.alert('Success', 'Cash collection added successfully.');
-      } catch (error) {
-        Alert.alert('Error', 'Failed to add collection online.');
-      }
-    } else {
-      const offlineCollections = JSON.parse(await AsyncStorage.getItem('offlineCollections')) || [];
-      offlineCollections.push(collection);
-      await AsyncStorage.setItem('offlineCollections', JSON.stringify(offlineCollections));
-      Alert.alert('Offline', 'Cash collection saved locally.');
-    }
+    // ✅ Store locally
+    const storedCollections = await AsyncStorage.getItem('offlineCashCollections');
+    const offlineCollections = storedCollections ? JSON.parse(storedCollections) : [];
 
-    setAmount(''); // Clear the amount field after submission
+    offlineCollections.push(collection);
+    await AsyncStorage.setItem('offlineCashCollections', JSON.stringify(offlineCollections));
+
+    Alert.alert('Offline', 'Cash collection saved locally.');
+
+    // ✅ Start background sync process
+    startCashCollectionsBackgroundSync();
+
+    // Reset form
+    setAmount('');
   };
 
   const handleDeleteCollection = (id) => {

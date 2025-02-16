@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert,TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery, useMutation } from '@apollo/client';
 import { createPriceAdjustmentMutation,PRODUCTS_QUERY } from '../graphql/mutations/createPriceAdjustment';
 //import { PRODUCTS_QUERY } from '../graphql/queries'; // Import the PRODUCTS_QUERY
@@ -7,6 +8,8 @@ import DropdownMenu from '../navigation/DropdownMenu';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Autocomplete from 'react-native-autocomplete-input';
 import moment from 'moment'; // For date formatting
+import { startPriceAdjustmentsBackgroundSync } from '../utils/syncPriceAdjustments'; // ✅ Import Background Sync
+
 
 const AddPriceAdjustmentScreen = ({ navigation }) => {
   const [productId, setProductId] = useState('');
@@ -28,20 +31,38 @@ const AddPriceAdjustmentScreen = ({ navigation }) => {
     if (!productId || !amount || !newPrice) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
-    }
+  }
 
-    try {
-      const response = await createPriceAdjustment({
-        variables: { product_id: productId, amount, new_price:newPrice,old_price:selectedProduct.priceHtml.finalPrice, product_name: selectedProduct.name, sku:selectedProduct.sku ,  created_at: createdAt.toISOString() },
-      });
-
-      Alert.alert('Success', 'Price adjustment created successfully.');
-      navigation.goBack(); // Navigate back after successful submission
-    } catch (error) {
-      console.error('Error creating price adjustment:', error);
-      Alert.alert('Error', 'Failed to create price adjustment. Please try again.');
-    }
+  const priceAdjustment = {
+      product_id: productId,
+      amount,
+      new_price: newPrice,
+      old_price: selectedProduct.priceHtml.finalPrice,
+      product_name: selectedProduct.name,
+      sku: selectedProduct.sku,
+      created_at: createdAt.toISOString(),
   };
+
+  // ✅ Store locally
+  const storedPriceAdjustments = await AsyncStorage.getItem('offlinePriceAdjustments');
+  const offlinePriceAdjustments = storedPriceAdjustments ? JSON.parse(storedPriceAdjustments) : [];
+
+  offlinePriceAdjustments.push(priceAdjustment);
+  await AsyncStorage.setItem('offlinePriceAdjustments', JSON.stringify(offlinePriceAdjustments));
+
+  Alert.alert('Offline', 'Price adjustment saved locally.');
+
+  // ✅ Start background sync process
+  startPriceAdjustmentsBackgroundSync();
+
+  // Reset form
+  setProductId('');
+  setAmount('');
+  setNewPrice('');
+  navigation.navigate('PriceAdjustments');
+
+  };
+  
 
   return (
     <View style={styles.container}>

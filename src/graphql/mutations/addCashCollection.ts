@@ -1,11 +1,14 @@
 import { gql } from '@apollo/client';
 
 export const addCashCollectionMutation = gql`
-  mutation createCashCollection($amount: String!, $collected_at: String!) {
-    createCashCollection(amount: $amount, collected_at: $collected_at) {
-      id
-      amount
-      collected_at
+  mutation createCashCollection($input: AddCashCollectionInput!) {
+    createCashCollection(input: $input) {
+      cash_collection {
+        id
+        amount
+        collected_at
+      }
+      message
     }
   }
 `;

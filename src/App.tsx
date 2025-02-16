@@ -24,6 +24,10 @@ import { RootStackParamList } from './navigation/RootStackParamList';
 import { startBackgroundSync } from './utils/syncUtils'; // ✅ Ensure correct import
 import { startStockTakeBackgroundSync } from './utils/syncStockTakes'; // ✅ Import background sync
 import { startStockItemsBackgroundSync } from './utils/syncStockItems'; // ✅ Import Background Sync
+import { startPriceAdjustmentsBackgroundSync } from './utils/syncPriceAdjustments'; // ✅ Import background sync
+import { startCashCollectionsBackgroundSync } from './utils/syncCashCollections'; // ✅ Import background sync
+
+
 
 
 
@@ -69,6 +73,8 @@ const App = () => {
     startBackgroundSync();
     startStockTakeBackgroundSync(); 
     startStockItemsBackgroundSync();
+    startPriceAdjustmentsBackgroundSync();
+    startCashCollectionsBackgroundSync();
   }, []);
 
   return (

@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { useQuery } from '@apollo/client';
-import Icon from 'react-native-vector-icons/FontAwesome5';  // Updated to version 10.1.0
+import Icon from 'react-native-vector-icons/FontAwesome';
 import DropdownMenu from '../navigation/DropdownMenu';
 import { listPriceAdjustmentsQuery } from '../graphql/mutations/createPriceAdjustment';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';  // Import moment for date formatting
-
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,6 +17,7 @@ const PriceAdjustmentsScreen = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    // Listen for network changes
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsOnline(state.isConnected ?? false);
       if (state.isConnected) {
@@ -28,6 +28,15 @@ const PriceAdjustmentsScreen = () => {
     return () => {
       unsubscribe();
     };
+  }, []);
+
+  useEffect(() => {
+    // Refresh data every 5 seconds
+    const interval = setInterval(() => {
+      refetch();
+    }, 5000);
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
   }, []);
 
   const refreshData = () => {

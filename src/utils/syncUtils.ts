@@ -49,10 +49,10 @@ export const stopBackgroundSync = async () => {
 export const syncOfflineOrders = async () => {
     try {
         console.log("Starting offline order sync...");
-        const storedOrders = await AsyncStorage.getItem('offlineOrders');
+        //const storedOrders = await AsyncStorage.getItem('offlineOrders');
         
        
-        let offlineOrders = JSON.parse(storedOrders);
+        let offlineOrders = JSON.parse(await AsyncStorage.getItem('offlineOrders'))||[];
         //console.log(offlineOrders?.length)
         //console.log(offlineOrders)
         if (offlineOrders?.length==0) {

@@ -76,8 +76,15 @@ export const syncStockTakes = async () => {
 
 // ✅ Background task function
 const backgroundStockTakeSyncTask = async () => {
-    console.log("Running background stock take sync...");
-    await syncStockTakes();
+    try {
+        //console.log("Running background sync task...");
+        await new Promise(async (resolve) => {
+        console.log("Running background stock take sync...");
+        await syncStockTakes();
+       });
+    } catch (error) {
+        console.error("Error in background sync task:", error);
+    }
 };
 
 // ✅ Start Background Sync
