@@ -65,11 +65,7 @@ export const syncOfflineOrders = async () => {
             return;
         }
         let remainingOrders = [];
-        const state = await NetInfo.fetch();
-        if (!state.isConnected) {
-            console.log('Device is offline, skipping sync.');
-            return;
-        }
+        
         for (const order of offlineOrders) {
             let success = false;
             let attempts = 0;

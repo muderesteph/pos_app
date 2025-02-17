@@ -40,11 +40,7 @@ export const syncCashCollections = async () => {
         //let cashCollections = JSON.parse(storedCollections);
         let remainingCollections = [];
 
-        const state = await NetInfo.fetch();
-        if (!state.isConnected) {
-            console.log('Device is offline, skipping sync.');
-            return;
-        }
+        
 
         for (const collection of cashCollections) {
             let success = false;

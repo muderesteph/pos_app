@@ -33,10 +33,10 @@ const DropdownMenu = ({ isVisible, onClose }) => {
             <Icon name="cube" size={20} color="#000" />
             <Text style={styles.menuText}>Stock Items</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigateWithAdminAuth('MissingStockItems')}>
+          {/* <TouchableOpacity style={styles.menuItem} onPress={() => navigateWithAdminAuth('MissingStockItems')}>
             <Icon name="cube" size={20} color="#000" />
             <Text style={styles.menuText}>Missing Stock Items</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity style={styles.menuItem} onPress={() => navigateWithAdminAuth('PriceAdjustments')}>
             <Icon name="tag" size={20} color="#000" />
             <Text style={styles.menuText}>Price Adjustments</Text>

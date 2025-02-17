@@ -21,6 +21,8 @@ import Autocomplete from 'react-native-autocomplete-input';
 import moment from 'moment';
 
 import { addInternalConsumptionMutation, PRODUCTS_QUERY, getInternalConsumptionNamesQuery } from '../graphql/mutations/internalConsumption';
+import { startInternalConsumptionsBackgroundSync } from '../utils/syncInternalConsumption'; // ✅ Import Background Sync
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -52,32 +54,37 @@ const AddInternalConsumptionScreen = () => {
       return;
     }
 
+    setIsSubmitting(true);
     const consumption = {
-      internal_consumption_name_id: selectedConsumptionName,
-      product_id: selectedProduct,
-      qty: qty,
-      selling_price: sellingPrice,
-      reason: reason,
-      consumed_at: createdAt.toISOString(),
+        internal_consumption_name_id: selectedConsumptionName,
+        product_id: selectedProduct,
+        qty: qty,
+        selling_price: sellingPrice,
+        reason: reason,
+        consumed_at: createdAt.toISOString(),
     };
 
-    setIsSubmitting(true);
+    // ✅ Store locally
+    const storedConsumptions = await AsyncStorage.getItem('offlineInternalConsumptions');
+    const offlineConsumptions = storedConsumptions ? JSON.parse(storedConsumptions) : [];
 
-    try {
-      if (isOnline) {
-        await addInternalConsumption({ variables: { input: consumption } });
-      } else {
-        const offlineConsumptions = JSON.parse(await AsyncStorage.getItem('offlineConsumptions')) || [];
-        offlineConsumptions.push(consumption);
-        await AsyncStorage.setItem('offlineConsumptions', JSON.stringify(offlineConsumptions));
-      }
+    offlineConsumptions.push(consumption);
+    await AsyncStorage.setItem('offlineInternalConsumptions', JSON.stringify(offlineConsumptions));
 
-      navigation.navigate('InternalConsumption');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to add internal consumption record.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    Alert.alert('Offline', 'Internal consumption saved locally.');
+
+    // ✅ Start background sync process
+    startInternalConsumptionsBackgroundSync();
+
+    // Reset form
+    setSelectedConsumptionName('');
+    setSelectedProduct('');
+    setSellingPrice('');
+    setQty('');
+    setReason('');
+    setIsSubmitting(false);
+
+
   };
 
   const openDatePicker = () => setShowDatePicker(true);

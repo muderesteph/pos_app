@@ -26,6 +26,8 @@ import { startStockTakeBackgroundSync } from './utils/syncStockTakes'; // ✅ Im
 import { startStockItemsBackgroundSync } from './utils/syncStockItems'; // ✅ Import Background Sync
 import { startPriceAdjustmentsBackgroundSync } from './utils/syncPriceAdjustments'; // ✅ Import background sync
 import { startCashCollectionsBackgroundSync } from './utils/syncCashCollections'; // ✅ Import background sync
+import { startInternalConsumptionsBackgroundSync } from './utils/syncInternalConsumption'; // ✅ Import background sync
+
 
 
 
@@ -75,6 +77,7 @@ const App = () => {
     startStockItemsBackgroundSync();
     startPriceAdjustmentsBackgroundSync();
     startCashCollectionsBackgroundSync();
+    startInternalConsumptionsBackgroundSync();
   }, []);
 
   return (

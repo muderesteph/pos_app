@@ -40,12 +40,7 @@ export const syncPriceAdjustments = async () => {
         //let priceAdjustments = JSON.parse(storedPriceAdjustments);
         let remainingPriceAdjustments = [];
 
-        const state = await NetInfo.fetch();
-        if (!state.isConnected) {
-            console.log('Device is offline, skipping sync.');
-            return;
-        }
-
+    
         for (const priceAdjustment of priceAdjustments) {
             let success = false;
             let attempts = 0;

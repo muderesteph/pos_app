@@ -43,11 +43,7 @@ export const syncStockItems = async () => {
         //let stockItems = JSON.parse(storedStockItems);
         let remainingStockItems = [];
 
-        const state = await NetInfo.fetch();
-        if (!state.isConnected) {
-            console.log('Device is offline, skipping sync.');
-            return;
-        }
+        
 
         for (const stockItem of stockItems) {
             let success = false;
