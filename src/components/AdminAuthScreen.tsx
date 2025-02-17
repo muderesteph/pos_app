@@ -24,7 +24,7 @@ const AdminAuthScreen = ({ route, navigation }) => {
   const handleLogin = async () => {
     if (isOnline) {
       try {
-        const response = await adminLogin({ variables: { pin :pin} });
+        const response = await adminLogin({ variables: { pin :pin } });
         if (response.data.posUserLogin.user.roleId === 1) {
           await AsyncStorage.setItem('adminAuthorized', 'true');
           setPin(''); // Clear the PIN after successful authentication

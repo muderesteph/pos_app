@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQuery } from '@apollo/client';
 import { useNavigation } from '@react-navigation/native';
 import DropdownMenu from '../navigation/DropdownMenu';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import Autocomplete from 'react-native-autocomplete-input';
 import moment from 'moment';
 
@@ -34,6 +34,7 @@ const AddInternalConsumptionScreen = () => {
   const [createdAt, setCreatedAt] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [query, setQuery] = useState('');
+  const [query2, setQuery2] = useState('');
   const [reason, setReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -110,16 +111,16 @@ const AddInternalConsumptionScreen = () => {
         <Text>Select Internal Consumption Name</Text>
         <Autocomplete
           data={consumptionNamesData?.getInternalConsumptionNames || []}
-          defaultValue={query}
-          onChangeText={text => {
-            setQuery(text);
+          defaultValue={query2}
+          onChangeText={text2 => {
+            setQuery2(text2);
             setSelectedConsumptionName('');
           }}
           flatListProps={{
             keyExtractor: item => item.id.toString(),
             renderItem: ({ item }) => (
               <TouchableWithoutFeedback onPress={() => {
-                setQuery(item.name);
+                setQuery2(item.name);
                 setSelectedConsumptionName(item.id);
               }}>
                 <View style={styles.item}>

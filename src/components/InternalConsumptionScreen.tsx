@@ -88,7 +88,7 @@ const InternalConsumptionScreen = () => {
   const renderItem = ({ item }) => (
     <View style={styles.tableRow}>
       <Text style={styles.rowText}>{moment(item.consumed_at).format('ddd D MMMM YYYY\nHH:mm')}</Text>
-      <Text style={styles.rowText}>{item.internal_consumption_name?.name}</Text>
+      <Text style={styles.rowText}>{item.internal_consumption_name}</Text>
       <Text style={styles.rowText}>{item.product_name}</Text>
       <Text style={styles.rowText}>{item.qty}</Text>
       <Text style={styles.rowText}>{item.reason}</Text>

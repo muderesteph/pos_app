@@ -4,10 +4,7 @@ export const getInternalConsumptionRecordsQuery = gql`
   query {
     getInternalConsumptionRecords {
       id
-      internal_consumption_name {
-        id
-        name
-      }
+      internal_consumption_name
       product_id
       product_name
       qty
@@ -31,12 +28,7 @@ export const addInternalConsumptionMutation = gql`
     addInternalConsumption(input: $input) {
       consumption {
         id
-        internal_consumption_name {
-          id
-          name
-        }
         product_id
-        product_name
         qty
         reason
         consumed_at
