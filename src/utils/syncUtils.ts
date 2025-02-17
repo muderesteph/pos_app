@@ -49,6 +49,11 @@ export const stopBackgroundSync = async () => {
 export const syncOfflineOrders = async () => {
     try {
         console.log("Starting offline order sync...");
+        const state = await NetInfo.fetch();
+        if (!state.isConnected) {
+            console.log('🚫 Device is offline, skipping sync.');
+            return;
+        }
         //const storedOrders = await AsyncStorage.getItem('offlineOrders');
         
        

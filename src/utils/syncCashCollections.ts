@@ -25,6 +25,12 @@ export const syncCashCollections = async () => {
     try {
         console.log("Starting cash collections sync...");
 
+        const state = await NetInfo.fetch();
+        if (!state.isConnected) {
+            console.log('🚫 Device is offline, skipping sync.');
+            return;
+        }
+
         let cashCollections = JSON.parse(await AsyncStorage.getItem('offlineCashCollections'))||[];
         if (cashCollections?.length==0) {
             console.log("No offline cash collections found.");

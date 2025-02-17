@@ -24,6 +24,11 @@ const options = {
 export const syncStockTakes = async () => {
     try {
         console.log("Starting stock take sync...");
+        const state = await NetInfo.fetch();
+        if (!state.isConnected) {
+            console.log('🚫 Device is offline, skipping sync.');
+            return;
+        }
 
         //const storedStockTakes = await AsyncStorage.getItem('localStockTakes');
         let stockTakes = JSON.parse(await AsyncStorage.getItem('localStockTakes'))||[];
