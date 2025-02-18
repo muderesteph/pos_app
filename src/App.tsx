@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
+import { PermissionsAndroid, Platform, Alert } from 'react-native';
 import { ApolloClient, InMemoryCache, ApolloProvider,ApolloLink,HttpLink} from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import NetInfo from '@react-native-community/netinfo';
 import TestScreen from './components/TestScreen';
 import LoginScreen from './components/LoginScreen';
 import AdminAuthScreen from './components/AdminAuthScreen';
@@ -27,6 +29,12 @@ import { startStockItemsBackgroundSync } from './utils/syncStockItems'; // ✅ I
 import { startPriceAdjustmentsBackgroundSync } from './utils/syncPriceAdjustments'; // ✅ Import background sync
 import { startCashCollectionsBackgroundSync } from './utils/syncCashCollections'; // ✅ Import background sync
 import { startInternalConsumptionsBackgroundSync } from './utils/syncInternalConsumption'; // ✅ Import background sync
+
+
+
+
+
+
 
 
 
@@ -69,8 +77,110 @@ const client = new ApolloClient({
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
+
+
+  const requestPermissions = async () => {
+    if (Platform.OS === 'android') {
+        try {
+            const granted = await PermissionsAndroid.requestMultiple([
+                PermissionsAndroid.PERMISSIONS.FOREGROUND_SERVICE,
+                PermissionsAndroid.PERMISSIONS.WAKE_LOCK,
+                PermissionsAndroid.PERMISSIONS.ACCESS_NETWORK_STATE,
+                PermissionsAndroid.PERMISSIONS.RECEIVE_BOOT_COMPLETED,
+            ]);
+
+            console.log("Permissions result:", granted); // ✅ Debugging
+
+            if (
+                granted[PermissionsAndroid.PERMISSIONS.FOREGROUND_SERVICE] === PermissionsAndroid.RESULTS.GRANTED &&
+                granted[PermissionsAndroid.PERMISSIONS.WAKE_LOCK] === PermissionsAndroid.RESULTS.GRANTED &&
+                granted[PermissionsAndroid.PERMISSIONS.ACCESS_NETWORK_STATE] === PermissionsAndroid.RESULTS.GRANTED &&
+                granted[PermissionsAndroid.PERMISSIONS.RECEIVE_BOOT_COMPLETED] === PermissionsAndroid.RESULTS.GRANTED
+            ) {
+                console.log("✅ All required permissions granted.");
+            } else {
+                Alert.alert(
+                    "Permissions Required",
+                    "Some permissions were not granted. This may cause background sync issues."
+                );
+                console.warn("❌ Some permissions were denied:", granted);
+            }
+        } catch (err) {
+            console.warn("❌ Error requesting permissions:", err);
+        }
+    }
+};
+
+const debugPermissions = async () => {
+  const foregroundService = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.FOREGROUND_SERVICE);
+  const wakeLock = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WAKE_LOCK);
+  const accessNetworkState = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_NETWORK_STATE);
+
+  console.log("🔍 Foreground Service:", foregroundService);
+  console.log("🔍 Wake Lock:", wakeLock);
+  console.log("🔍 Network State:", accessNetworkState);
+};
+
+const checkPermissionsBeforeSync = async () => {
+  const foregroundService = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.FOREGROUND_SERVICE);
+  const wakeLock = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WAKE_LOCK);
+  const accessNetworkState = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_NETWORK_STATE);
+
+  if (!foregroundService || !wakeLock || !accessNetworkState) {
+      console.warn("❌ Required permissions are missing. Cannot start sync.");
+      return;
+  }
+
+  console.log("✅ All permissions granted, starting sync...");
+  //startBackgroundSync();
+};
+
+useEffect(() => {
+    //requestPermissions();
+    //debugPermissions();
+    //checkPermissionsBeforeSync();
+}, []);
+
+
+
+
+
+  // useEffect(() => {
+  //   const startAllBackgroundSyncs = async () => {
+  //     try {
+  //       console.log("🔄 Initializing background sync...");
+  //       setTimeout(() => {
+  //         console.log("✅ Delayed background sync start...");
+  //         //startBackgroundSync();
+  //     }, 3000); // ✅ Add slight delay to avoid freezing on launch
+  //     } catch (error) {
+  //       console.error("❌ Error initializing background sync:", error);
+  //     }
+  //   };
+  
+  //   startAllBackgroundSyncs();
+  // }, []);
+
+  // useEffect(() => {
+  //   requestPermissions();
+  // }, []);
+
+
+  // useEffect(() => {
+  //   const startAllBackgroundSyncs = async () => {
+  //     try {
+  //       console.log("🔄 Initializing background sync...");
+  //       await requestPermissions(); // Wait for permissions
+  //       await startBackgroundSync();
+  //     } catch (error) {
+  //       console.error("❌ Error initializing background sync:", error);
+  //     }
+  //   };
+  
+  //   startAllBackgroundSyncs();
+  // }, []);
   useEffect(() => {
-    // Initialize background syncing
+    //Initialize background syncing
     //configureBackgroundSync();
     startBackgroundSync();
     startStockTakeBackgroundSync(); 
@@ -79,6 +189,62 @@ const App = () => {
     startCashCollectionsBackgroundSync();
     startInternalConsumptionsBackgroundSync();
   }, []);
+
+//   useEffect(() => {
+//     const unsubscribe = NetInfo.addEventListener(state => {
+//         console.log(`📶 Network Status: ${state.isConnected ? "Online" : "Offline"}`);
+//         if (state.isConnected) {
+//             console.log("🚀 Device is back online, syncing orders...");
+//             startBackgroundSync();
+//             startStockTakeBackgroundSync(); 
+//             startStockItemsBackgroundSync();
+//             startPriceAdjustmentsBackgroundSync();
+//             startCashCollectionsBackgroundSync();
+//             startInternalConsumptionsBackgroundSync();
+//         }
+//     });
+
+//     return () => {
+//         unsubscribe();
+//     };
+// }, []);
+
+
+
+  // useEffect(() => {
+  //   console.log("🚀 App started, initializing background sync...");
+
+  //   const startAllBackgroundSyncs = async () => {
+  //     console.log("🔄 Delayed background sync initialization...");
+
+  //     await new Promise(resolve => setTimeout(resolve, 2000));
+  //     startBackgroundSync(); // Orders sync
+  //     console.log("✅ Order sync started...");
+
+  //     await new Promise(resolve => setTimeout(resolve, 2000));
+  //     startStockTakeBackgroundSync();
+  //     console.log("✅ Stock Take sync started...");
+
+  //     await new Promise(resolve => setTimeout(resolve, 2000));
+  //     startStockItemsBackgroundSync();
+  //     console.log("✅ Stock Items sync started...");
+
+  //     await new Promise(resolve => setTimeout(resolve, 2000));
+  //     startPriceAdjustmentsBackgroundSync();
+  //     console.log("✅ Price Adjustments sync started...");
+
+  //     await new Promise(resolve => setTimeout(resolve, 2000));
+  //     startCashCollectionsBackgroundSync();
+  //     console.log("✅ Cash Collections sync started...");
+
+  //     await new Promise(resolve => setTimeout(resolve, 2000));
+  //     startInternalConsumptionsBackgroundSync();
+  //     console.log("✅ Internal Consumptions sync started...");
+  //   };
+
+  //   startAllBackgroundSyncs();
+  // }, []);
+
 
   return (
     <ApolloProvider client={client}>

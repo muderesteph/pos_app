@@ -77,13 +77,24 @@ export const syncInternalConsumptions = async () => {
 // ✅ Background task function
 const backgroundInternalConsumptionSyncTask = async () => {
     console.log("Running background internal consumption sync...");
-    await syncInternalConsumptions();
+    //await syncInternalConsumptions();
 };
 
 // ✅ Start Background Sync
 export const startInternalConsumptionsBackgroundSync = async () => {
     console.log("Starting background internal consumptions sync...");
-    await BackgroundActions.start(backgroundInternalConsumptionSyncTask, options);
+    //await BackgroundActions.start(backgroundInternalConsumptionSyncTask, options);
+
+     try {
+            console.log("Running background sync task...");
+            await new Promise(async (resolve) => {
+                await syncInternalConsumptions();
+                resolve(); // Mark task as completed
+            });
+        } catch (error) {
+            console.error("Error in background sync task:", error);
+        }
+
 };
 
 // ✅ Stop Background Sync

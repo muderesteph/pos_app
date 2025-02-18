@@ -11,141 +11,148 @@
 11    <uses-permission android:name="android.permission.INTERNET" />
 11-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:3:5-67
 11-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:3:22-64
-12    <!-- Required permissions for background sync -->
-13    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-13-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:5:5-77
-13-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:5:22-74
-14    <uses-permission android:name="android.permission.WAKE_LOCK" />
-14-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:6:5-68
-14-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:6:22-65
+12    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+12-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:4:1-73
+12-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:4:18-70
+13    <uses-permission android:name="android.permission.WAKE_LOCK" />
+13-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:5:1-64
+13-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:5:18-61
+14    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+14-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:6:1-75
+14-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:6:18-72
 15    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-15-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:7:5-80
-15-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:7:22-78
-16    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-16-->[:react-native-community_netinfo] /home/stephenmudere/Documents/personal/pos_app/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:7:5-79
-16-->[:react-native-community_netinfo] /home/stephenmudere/Documents/personal/pos_app/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:7:22-76
-17    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-17-->[:react-native-community_netinfo] /home/stephenmudere/Documents/personal/pos_app/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:5-76
-17-->[:react-native-community_netinfo] /home/stephenmudere/Documents/personal/pos_app/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:22-73
-18
-19    <permission
-19-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:22:5-24:47
-20        android:name="com.pos_app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-20-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:23:9-81
-21        android:protectionLevel="signature" />
-21-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:24:9-44
-22
-23    <uses-permission android:name="com.pos_app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-23-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:26:5-97
-23-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
-24
-25    <application
-25-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:9:5-44:19
-26        android:name="com.pos_app.MainApplication"
-26-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:10:7-38
-27        android:allowBackup="false"
-27-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:14:7-34
-28        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-28-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
-29        android:extractNativeLibs="false"
-30        android:icon="@mipmap/ic_launcher"
-30-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:12:7-41
-31        android:label="@string/app_name"
-31-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:11:7-39
-32        android:roundIcon="@mipmap/ic_launcher_round"
-32-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:13:7-52
-33        android:supportsRtl="true"
-33-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:16:7-33
-34        android:theme="@style/AppTheme" >
-34-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:15:7-38
-35        <activity
-35-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:17:7-28:18
-36            android:name="com.pos_app.MainActivity"
-36-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:18:9-37
-37            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-37-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:20:9-118
-38            android:exported="true"
-38-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:23:9-32
-39            android:label="@string/app_name"
-39-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:19:9-41
-40            android:launchMode="singleTask"
-40-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:21:9-40
-41            android:windowSoftInputMode="adjustResize" >
-41-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:22:9-51
-42            <intent-filter>
-42-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:24:9-27:25
-43                <action android:name="android.intent.action.MAIN" />
-43-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:25:13-65
-43-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:25:21-62
-44
-45                <category android:name="android.intent.category.LAUNCHER" />
-45-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:26:13-73
-45-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:26:23-70
-46            </intent-filter>
-47        </activity>
-48
-49        <!-- Allow background execution -->
-50        <service
-50-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:31:7-33:38
-51            android:name="com.transistorsoft.rnbackgroundfetch.HeadlessJobService"
-51-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:31:16-86
-52            android:exported="true"
-52-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:33:13-36
-53            android:permission="android.permission.BIND_JOB_SERVICE" />
-53-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:32:13-69
-54
-55        <receiver
-55-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:35:9-43:20
-56            android:name="com.transistorsoft.rnbackgroundfetch.BootReceiver"
-56-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:36:13-77
-57            android:exported="false" >
-57-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:37:13-37
-58            <intent-filter>
-58-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:38:13-42:29
-59                <action android:name="android.intent.action.BOOT_COMPLETED" />
-59-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:39:17-78
-59-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:39:25-76
-60                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-60-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:40:17-81
-60-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:40:25-79
-61                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
-61-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:41:17-81
-61-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:41:25-79
-62            </intent-filter>
-63        </receiver>
-64
-65        <service android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" />
-65-->[:react-native-background-actions] /home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-background-actions/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:10:9-89
-65-->[:react-native-background-actions] /home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-background-actions/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:10:18-86
-66
-67        <provider
-67-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
-68            android:name="androidx.startup.InitializationProvider"
-68-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
-69            android:authorities="com.pos_app.androidx-startup"
-69-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
-70            android:exported="false" >
-70-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
-71            <meta-data
-71-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
-72                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-72-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
-73                android:value="androidx.startup" />
-73-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
+15-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:7:1-77
+15-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:7:18-74
+16    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+16-->[:react-native-community_netinfo] /home/stephenmudere/Documents/personal/pos_app/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:5-76
+16-->[:react-native-community_netinfo] /home/stephenmudere/Documents/personal/pos_app/node_modules/@react-native-community/netinfo/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:22-73
+17
+18    <permission
+18-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:22:5-24:47
+19        android:name="com.pos_app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+19-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:23:9-81
+20        android:protectionLevel="signature" />
+20-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:24:9-44
+21
+22    <uses-permission android:name="com.pos_app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+22-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:26:5-97
+22-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
+23
+24    <application
+24-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:9:5-50:19
+25        android:name="com.pos_app.MainApplication"
+25-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:10:7-38
+26        android:allowBackup="false"
+26-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:14:7-34
+27        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+27-->[androidx.core:core:1.9.0] /home/stephenmudere/.gradle/caches/8.8/transforms/ce4f5dec389711446a83e4dc2ffe53e3/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
+28        android:extractNativeLibs="false"
+29        android:icon="@mipmap/ic_launcher"
+29-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:12:7-41
+30        android:label="@string/app_name"
+30-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:11:7-39
+31        android:roundIcon="@mipmap/ic_launcher_round"
+31-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:13:7-52
+32        android:supportsRtl="true"
+32-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:16:7-33
+33        android:theme="@style/AppTheme" >
+33-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:15:7-38
+34        <activity
+34-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:17:7-28:18
+35            android:name="com.pos_app.MainActivity"
+35-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:18:9-37
+36            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+36-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:20:9-118
+37            android:exported="true"
+37-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:23:9-32
+38            android:label="@string/app_name"
+38-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:19:9-41
+39            android:launchMode="singleTask"
+39-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:21:9-40
+40            android:windowSoftInputMode="adjustResize" >
+40-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:22:9-51
+41            <intent-filter>
+41-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:24:9-27:25
+42                <action android:name="android.intent.action.MAIN" />
+42-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:25:13-65
+42-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:25:21-62
+43
+44                <category android:name="android.intent.category.LAUNCHER" />
+44-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:26:13-73
+44-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:26:23-70
+45            </intent-filter>
+46        </activity>
+47
+48        <!-- Allow background execution -->
+49        <service
+49-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:31:7-33:38
+50            android:name="com.transistorsoft.rnbackgroundfetch.HeadlessJobService"
+50-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:31:16-86
+51            android:exported="true"
+51-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:33:13-36
+52            android:permission="android.permission.BIND_JOB_SERVICE" />
+52-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:32:13-69
+53        <service
+53-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:35:9-38:65
+54            android:name="com.pos_app.SyncService"
+54-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:36:5-32
+55            android:foregroundServiceType="dataSync"
+55-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:37:5-45
+56            android:permission="android.permission.FOREGROUND_SERVICE" />
+56-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:38:5-63
+57
+58        <receiver
+58-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:41:9-49:20
+59            android:name="com.transistorsoft.rnbackgroundfetch.BootReceiver"
+59-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:42:13-77
+60            android:exported="false" >
+60-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:43:13-37
+61            <intent-filter>
+61-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:44:13-48:29
+62                <action android:name="android.intent.action.BOOT_COMPLETED" />
+62-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:45:17-78
+62-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:45:25-76
+63                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+63-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:46:17-81
+63-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:46:25-79
+64                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+64-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:47:17-81
+64-->/home/stephenmudere/Documents/personal/pos_app/android/app/src/main/AndroidManifest.xml:47:25-79
+65            </intent-filter>
+66        </receiver>
+67
+68        <service android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" />
+68-->[:react-native-background-actions] /home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-background-actions/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:10:9-89
+68-->[:react-native-background-actions] /home/stephenmudere/Documents/personal/pos_app/node_modules/react-native-background-actions/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:10:18-86
+69
+70        <provider
+70-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+71            android:name="androidx.startup.InitializationProvider"
+71-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
+72            android:authorities="com.pos_app.androidx-startup"
+72-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
+73            android:exported="false" >
+73-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
 74            <meta-data
-74-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/stephenmudere/.gradle/caches/8.8/transforms/801ae63aa7ca7d1656b0fc5b53a5e7d4/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
-75                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-75-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/stephenmudere/.gradle/caches/8.8/transforms/801ae63aa7ca7d1656b0fc5b53a5e7d4/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
+74-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+75                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+75-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
 76                android:value="androidx.startup" />
-76-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/stephenmudere/.gradle/caches/8.8/transforms/801ae63aa7ca7d1656b0fc5b53a5e7d4/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
-77        </provider>
-78
-79        <meta-data
-79-->[com.facebook.soloader:soloader:0.11.0] /home/stephenmudere/.gradle/caches/8.8/transforms/e24043839ca682ddfdc90d96ffeb4dab/transformed/soloader-0.11.0/AndroidManifest.xml:12:9-14:37
-80            android:name="com.facebook.soloader.enabled"
-80-->[com.facebook.soloader:soloader:0.11.0] /home/stephenmudere/.gradle/caches/8.8/transforms/e24043839ca682ddfdc90d96ffeb4dab/transformed/soloader-0.11.0/AndroidManifest.xml:13:13-57
-81            android:value="false" />
-81-->[com.facebook.soloader:soloader:0.11.0] /home/stephenmudere/.gradle/caches/8.8/transforms/e24043839ca682ddfdc90d96ffeb4dab/transformed/soloader-0.11.0/AndroidManifest.xml:14:13-34
-82    </application>
-83
-84</manifest>
+76-->[androidx.emoji2:emoji2:1.2.0] /home/stephenmudere/.gradle/caches/8.8/transforms/7371c517d09178e5b3a6701c452d7bb8/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
+77            <meta-data
+77-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/stephenmudere/.gradle/caches/8.8/transforms/801ae63aa7ca7d1656b0fc5b53a5e7d4/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
+78                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+78-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/stephenmudere/.gradle/caches/8.8/transforms/801ae63aa7ca7d1656b0fc5b53a5e7d4/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
+79                android:value="androidx.startup" />
+79-->[androidx.lifecycle:lifecycle-process:2.4.1] /home/stephenmudere/.gradle/caches/8.8/transforms/801ae63aa7ca7d1656b0fc5b53a5e7d4/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
+80        </provider>
+81
+82        <meta-data
+82-->[com.facebook.soloader:soloader:0.11.0] /home/stephenmudere/.gradle/caches/8.8/transforms/e24043839ca682ddfdc90d96ffeb4dab/transformed/soloader-0.11.0/AndroidManifest.xml:12:9-14:37
+83            android:name="com.facebook.soloader.enabled"
+83-->[com.facebook.soloader:soloader:0.11.0] /home/stephenmudere/.gradle/caches/8.8/transforms/e24043839ca682ddfdc90d96ffeb4dab/transformed/soloader-0.11.0/AndroidManifest.xml:13:13-57
+84            android:value="false" />
+84-->[com.facebook.soloader:soloader:0.11.0] /home/stephenmudere/.gradle/caches/8.8/transforms/e24043839ca682ddfdc90d96ffeb4dab/transformed/soloader-0.11.0/AndroidManifest.xml:14:13-34
+85    </application>
+86
+87</manifest>

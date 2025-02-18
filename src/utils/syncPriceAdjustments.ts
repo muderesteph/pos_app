@@ -90,7 +90,17 @@ const backgroundPriceAdjustmentSyncTask = async () => {
 // ✅ Start Background Sync
 export const startPriceAdjustmentsBackgroundSync = async () => {
     console.log("Starting background price adjustments sync...");
-    await BackgroundActions.start(backgroundPriceAdjustmentSyncTask, options);
+    //await BackgroundActions.start(backgroundPriceAdjustmentSyncTask, options);
+
+    try {
+        //console.log("Running background sync task...");
+        await new Promise(async (resolve) => {
+        console.log("Running background price adjustment sync...");
+        await syncPriceAdjustments();
+            });
+    } catch (error) {
+        console.error("Error in background sync task:", error);
+    }
 };
 
 // ✅ Stop Background Sync

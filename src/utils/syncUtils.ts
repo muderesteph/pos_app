@@ -18,10 +18,12 @@ const options = {
     parameters: {
         delay: 1000,
     },
+    foreground: true,
 };
 
 // ✅ Modified to prevent app from freezing
 const backgroundSyncTask = async (taskData) => {
+    console.log(taskData)
     try {
         console.log("Running background sync task...");
         await new Promise(async (resolve) => {
@@ -36,7 +38,16 @@ const backgroundSyncTask = async (taskData) => {
 // ✅ Fix: Run background sync asynchronously
 export const startBackgroundSync = async () => {
     console.log("Starting background sync...");
-    await BackgroundActions.start(backgroundSyncTask, options);
+    //await BackgroundActions.start(backgroundSyncTask, options);
+    try {
+        console.log("Running background sync task...");
+        await new Promise(async (resolve) => {
+            await syncOfflineOrders();
+            resolve(); // Mark task as completed
+        });
+    } catch (error) {
+        console.error("Error in background sync task:", error);
+    }
 };
 
 // ✅ Stop Background Sync
@@ -49,6 +60,14 @@ export const stopBackgroundSync = async () => {
 export const syncOfflineOrders = async () => {
     try {
         console.log("Starting offline order sync...");
+
+        try {
+            const storedOrders = await AsyncStorage.getItem('offlineOrders');
+            console.log("📦 Stored Orders:", storedOrders);
+        } catch (error) {
+            console.error("❌ Error retrieving offline orders:", error);
+        }
+
         const state = await NetInfo.fetch();
         if (!state.isConnected) {
             console.log('🚫 Device is offline, skipping sync.');

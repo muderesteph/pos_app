@@ -91,7 +91,16 @@ const backgroundCashCollectionSyncTask = async () => {
 // ✅ Start Background Sync
 export const startCashCollectionsBackgroundSync = async () => {
     console.log("Starting background cash collections sync...");
-    await BackgroundActions.start(backgroundCashCollectionSyncTask, options);
+    //await BackgroundActions.start(backgroundCashCollectionSyncTask, options);
+    try {
+        //console.log("Running background sync task...");
+        await new Promise(async (resolve) => {
+            console.log("Running background cash collection sync...");
+            await syncCashCollections();
+        });
+    } catch (error) {
+        console.error("Error in background sync task:", error);
+    }
 };
 
 // ✅ Stop Background Sync

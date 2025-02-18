@@ -200,6 +200,7 @@ const PosScreen = () => {
       const offlineOrders = storedOrders ? JSON.parse(storedOrders) : [];
       offlineOrders.push(order);
       await AsyncStorage.setItem('offlineOrders', JSON.stringify(offlineOrders));
+      await syncOfflineOrders();
     } catch (error) {
       console.error('Error saving order to storage', error);
     }
