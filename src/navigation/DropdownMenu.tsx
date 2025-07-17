@@ -1,12 +1,22 @@
-// components/DropdownMenu.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
-import { AdminAuthScreenNavigationProp } from './RootStackParamList';
+import { AdminAuthScreenNavigationProp, RootStackParamList } from './RootStackParamList';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DropdownMenu = ({ isVisible, onClose }) => {
   const navigation = useNavigation<AdminAuthScreenNavigationProp>();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      // Assume that when an admin logs in, you store 'isAdmin' as "true" in AsyncStorage.
+      const adminFlag = await AsyncStorage.getItem('isAdmin');
+      setIsAdmin(adminFlag === 'true');
+    };
+    checkAdminStatus();
+  }, []);
 
   const navigateWithAdminAuth = (screenName: keyof RootStackParamList) => {
     onClose();
@@ -25,30 +35,30 @@ const DropdownMenu = ({ isVisible, onClose }) => {
             <Icon name="shopping-cart" size={20} color="#000" />
             <Text style={styles.menuText}>Sold Items</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigateWithAdminAuth('CashCollections')}>
-            <Icon name="credit-card" size={20} color="#000" />
-            <Text style={styles.menuText}>Cash Collections</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigateWithAdminAuth('StockItems')}>
-            <Icon name="cube" size={20} color="#000" />
-            <Text style={styles.menuText}>Stock Items</Text>
-          </TouchableOpacity>
-          {/* <TouchableOpacity style={styles.menuItem} onPress={() => navigateWithAdminAuth('MissingStockItems')}>
-            <Icon name="cube" size={20} color="#000" />
-            <Text style={styles.menuText}>Missing Stock Items</Text>
-          </TouchableOpacity> */}
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigateWithAdminAuth('PriceAdjustments')}>
-            <Icon name="tag" size={20} color="#000" />
-            <Text style={styles.menuText}>Price Adjustments</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigateWithAdminAuth('StockTake')}>
-            <Icon name="list" size={20} color="#000" />
-            <Text style={styles.menuText}>Stock Take</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={() => navigateWithAdminAuth('InternalConsumption')}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('InternalConsumption')}>
             <Icon name="list" size={20} color="#000" />
             <Text style={styles.menuText}>Internal Consumption</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('StockReco')}>
+            <Icon name="list" size={20} color="#000" />
+            <Text style={styles.menuText}>Stock Reco</Text>
+          </TouchableOpacity>
+          {isAdmin && (
+            <>
+              <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('CashCollections')}>
+                <Icon name="credit-card" size={20} color="#000" />
+                <Text style={styles.menuText}>Cash Collections</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('StockItems')}>
+                <Icon name="cube" size={20} color="#000" />
+                <Text style={styles.menuText}>Stock Items</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('PriceAdjustments')}>
+                <Icon name="tag" size={20} color="#000" />
+                <Text style={styles.menuText}>Price Adjustments</Text>
+              </TouchableOpacity>
+            </>
+          )}
           <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('About')}>
             <Icon name="shopping-cart" size={20} color="#000" />
             <Text style={styles.menuText}>About</Text>

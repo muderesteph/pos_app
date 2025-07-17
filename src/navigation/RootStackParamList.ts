@@ -11,7 +11,7 @@ export type RootStackParamList = {
   MissingStockItems: undefined;
   PriceAdjustments: undefined;
   CollectCash: undefined;
-  StockTake: undefined;
+  StockReco: undefined;
   AddStockItem: undefined;
   AddMissingStockItem: undefined;
   AddPriceAdjustment:undefined;
@@ -30,7 +30,7 @@ export type MissingStockItemsScreenNavigationProp = StackNavigationProp<RootStac
 export type PriceAdjustmentsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'PriceAdjustments'>;
 export type PosScreenNavigationProp = StackNavigationProp<RootStackParamList, 'POSTAB'>;
 export type CollectCashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CollectCash'>;
-export type StockTakeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'StockTake'>;
+export type StockRecoScreenNavigationProp = StackNavigationProp<RootStackParamList, 'StockReco'>;
 export type InternalConsumptionNavigationProp = StackNavigationProp<RootStackParamList, 'InternalConsumption'>;
 export type IOrderedProductsNavigationProp = StackNavigationProp<RootStackParamList, 'OrderedProducts'>;
 export type AboutScreenNavigationProp = StackNavigationProp<RootStackParamList, 'About'>;
@@ -45,7 +45,7 @@ export type MissingStockItemsScreenRouteProp = RouteProp<RootStackParamList, 'Mi
 export type PriceAdjustmentsScreenRouteProp = RouteProp<RootStackParamList, 'PriceAdjustments'>;
 export type PosScreenScreenRouteProp = RouteProp<RootStackParamList, 'POSMAIN'>;
 export type CollectCashScreenRouteProp = RouteProp<RootStackParamList, 'CollectCash'>;
-export type StockTakeScreenRouteProp = RouteProp<RootStackParamList, 'StockTake'>;
+export type StockRecoScreenRouteProp = RouteProp<RootStackParamList, 'StockReco'>;
 export type InternalConsumptionScreenRouteProp = RouteProp<RootStackParamList, 'InternalConsumption'>;
 export type OrderedProductsRouteProp = RouteProp<RootStackParamList, 'OrderedProducts'>;
 export type AboutScreenRouteProp = RouteProp<RootStackParamList, 'About'>;

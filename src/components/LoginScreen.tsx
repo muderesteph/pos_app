@@ -40,6 +40,12 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         if (data.posUserLogin.status) {
           await AsyncStorage.setItem('token', data.posUserLogin.accessToken);
           await AsyncStorage.setItem('pin', pin);
+          if (data.posUserLogin.user.roleId === 1) {
+            await AsyncStorage.setItem('isAdmin', 'true');
+          } else {
+            await AsyncStorage.setItem('isAdmin', 'false');
+          }
+          setPin('');
           navigation.navigate('POSMAIN');
         } else {
           Alert.alert('Login Failed', 'Invalid credentials');
@@ -62,6 +68,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     } else {
       const storedPin = await AsyncStorage.getItem('pin');
       if (storedPin === pin) {
+        setPin('');
         const token = await AsyncStorage.getItem('token');
         if (token) {
           navigation.navigate('POSMAIN');

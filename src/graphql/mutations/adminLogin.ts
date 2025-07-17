@@ -20,6 +20,9 @@ mutation PosUserLogin($pin: String!) {
     accessToken
     tokenType
     expiresIn
+    user {
+        roleId
+      }
   }
 }
 `;

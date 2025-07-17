@@ -115,32 +115,7 @@ const AddInternalConsumptionScreen = () => {
         <Icon name="refresh" size={30} color="#000" />
       </TouchableOpacity>
       <View style={styles.active_page}>
-        <Text>Select Internal Consumption Name</Text>
-        <Autocomplete
-          data={consumptionNamesData?.getInternalConsumptionNames || []}
-          defaultValue={query2}
-          onChangeText={text2 => {
-            setQuery2(text2);
-            setSelectedConsumptionName('');
-          }}
-          flatListProps={{
-            keyExtractor: item => item.id.toString(),
-            renderItem: ({ item }) => (
-              <TouchableWithoutFeedback onPress={() => {
-                setQuery2(item.name);
-                setSelectedConsumptionName(item.id);
-              }}>
-                <View style={styles.item}>
-                  <Text>{item.name}</Text>
-                </View>
-              </TouchableWithoutFeedback>
-            ),
-          }}
-          placeholder="Search Consumption Name"
-          inputContainerStyle={styles.autocompleteInputContainer}
-          listContainerStyle={styles.autocompleteListContainer}
-          style={styles.input}
-        />
+        
 
         <Text>Select Product</Text>
         <Autocomplete
@@ -193,6 +168,33 @@ const AddInternalConsumptionScreen = () => {
           placeholder="Reason"
           value={reason}
           onChangeText={setReason}
+          style={styles.input}
+        />
+
+<Text>Select Internal Consumption Name</Text>
+        <Autocomplete
+          data={consumptionNamesData?.getInternalConsumptionNames || []}
+          defaultValue={query2}
+          onChangeText={text2 => {
+            setQuery2(text2);
+            setSelectedConsumptionName('');
+          }}
+          flatListProps={{
+            keyExtractor: item => item.id.toString(),
+            renderItem: ({ item }) => (
+              <TouchableWithoutFeedback onPress={() => {
+                setQuery2(item.name);
+                setSelectedConsumptionName(item.id);
+              }}>
+                <View style={styles.item}>
+                  <Text>{item.name}</Text>
+                </View>
+              </TouchableWithoutFeedback>
+            ),
+          }}
+          placeholder="Search Consumption Name"
+          inputContainerStyle={styles.autocompleteInputContainer}
+          listContainerStyle={styles.autocompleteListContainer}
           style={styles.input}
         />
 
@@ -253,6 +255,12 @@ const styles = StyleSheet.create({
   },
   autocompleteListContainer: {
     maxHeight: 150,
+    position: 'absolute',
+    top: 40, // adjust this value as needed
+    left: 0,
+    right: 0,
+    zIndex: 999,
+    elevation: 999,
   },
   item: {
     padding: 10,
@@ -274,7 +282,7 @@ const styles = StyleSheet.create({
   },
   active_page: {
     position: 'relative',
-    overflow: 'scroll',
+    overflow: 'visible', // allow dropdown to render outside its container
     height: height * 0.65,
   },
   menu_page: {

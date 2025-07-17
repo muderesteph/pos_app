@@ -12,7 +12,7 @@ import AdminAuthScreen from './components/AdminAuthScreen';
 import CashCollectionsScreen from './components/CashCollectionsScreen';
 import PriceAdjustmentsScreen from './components/PriceAdjustmentsScreen';
 import PosScreen from './components/PosScreen';
-import StockTakeScreen from './components/StockTakeScreen';
+import StockRecoScreen from './components/StockRecoScreen';
 import StockItemsScreen from './components/StockItemsScreen';
 import MissingStockItemsScreen from './components/MissingStockItemsScreen';
 import AddStockItemScreen from './components/AddStockItemScreen';
@@ -258,7 +258,7 @@ useEffect(() => {
           <Stack.Screen name="PriceAdjustments" component={PriceAdjustmentsScreen} />
           <Stack.Screen name="StockItems" component={StockItemsScreen} />
           <Stack.Screen name="MissingStockItems" component={MissingStockItemsScreen} />
-          <Stack.Screen name="StockTake" component={StockTakeScreen} />
+          <Stack.Screen name="StockReco" component={StockRecoScreen} />
           <Stack.Screen name="AddStockItem" component={AddStockItemScreen} />
           <Stack.Screen name="AddMissingStockItem" component={AddMissingStockItemScreen} />
           <Stack.Screen name="AddPriceAdjustment" component={AddPriceAdjustmentScreen} />
